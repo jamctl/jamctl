@@ -14,7 +14,7 @@ find_package(Boost CONFIG REQUIRED COMPONENTS filesystem process)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-if(WIN32)
+if (WIN32)
     target_link_libraries(tmsmt_core PRIVATE ws2_32)
     target_link_libraries(tmsmt_core_static PRIVATE ws2_32)
-endif()
+endif ()

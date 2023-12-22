@@ -15,7 +15,16 @@ add_executable(jamd main.cpp
         modules/backup/backup.cpp
         modules/backup/backup.h
         modules/search_java/search_java.cpp
-        modules/search_java/search_java.h)
+        modules/search_java/search_java.h
+        modules/manager/InstanceManager/InstanceManager.cpp
+        modules/manager/InstanceManager/InstanceManager.h
+        modules/manager/InstanceManager/ConfigObj.cpp
+        utils/Singleton.h
+        controllers/Instances.h
+        controllers/User.h
+        controllers/Instances.cpp
+        controllers/User.cpp
+)
 
 if (MSVC)
     target_compile_options(jamd PRIVATE /experimental:module)

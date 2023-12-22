@@ -52,28 +52,38 @@ vector<string> SingleServer::defaultJavaOptions() {
 
 int SingleServer::start() {
     if (xms > xmx) {
+        cerr << "Error: Xms (" << xms << "G) cannot be greater than Xmx (" << xmx << "G)." << endl;
         return 2;
     }
 
+    // 确定服务器文件路径
     fs::path server_file_path = fs::path(server_path) / server_file;
     if (server_file.find(".jar") == string::npos && type == ServerType::JAVA) {
         server_file_path += ".jar";
     }
 
-    stdin_stream = make_unique<bp::opstream>();
-    stdout_pipe = make_unique<bp::async_pipe>(io_context);
-    stderr_pipe = make_unique<bp::async_pipe>(io_context);
+    // 初始化流和管道
+    try {
+        stdin_stream = make_unique<bp::opstream>();
+        stdout_pipe = make_unique<bp::async_pipe>(io_context);
+        stderr_pipe = make_unique<bp::async_pipe>(io_context);
+    } catch (const exception& e) {
+        cerr << "Failed to initialize pipes: " << e.what() << endl;
+        return 1;
+    }
 
-    vector<string> args;
-    args.emplace_back(executor);
+    // 构建启动参数
+    vector<string> args{executor};
     args.insert(args.end(), server_options.begin(), server_options.end());
+
     if (type == ServerType::JAVA) {
-        args.emplace_back("-jar");
         args.emplace_back("-Xms" + to_string(xms) + "G");
         args.emplace_back("-Xmx" + to_string(xmx) + "G");
+        args.emplace_back("-jar");
     }
     args.emplace_back(server_file_path.string());
 
+    // 启动服务器进程
     try {
         server_process = make_unique<bp::child>(
                 args,
@@ -83,6 +93,7 @@ int SingleServer::start() {
                 bp::start_dir = server_path
         );
 
+        // 异步读取标准输出和标准错误
         start_async_read(stdout_pipe, false, [](const string &output) { cout << output; });
         start_async_read(stderr_pipe, true, [](const string &output) { cerr << output; });
 
@@ -91,13 +102,14 @@ int SingleServer::start() {
         return 1;
     }
 
+    // 运行异步 I/O 上下文
     io_context.run();
 
     return 0;
 }
 
 void SingleServer::exit() {
-    if (server_process) {
+    if (server_process && server_process->running()) {
         server_process->terminate();
         server_process->wait();
         cleanup();
@@ -106,8 +118,10 @@ void SingleServer::exit() {
 
 void SingleServer::stop() {
     command("stop");
-    server_process->wait();
-    cleanup();
+    if (server_process) {
+        server_process->wait();
+        cleanup();
+    }
 }
 
 void SingleServer::command(const string &cmd) const {
@@ -119,7 +133,7 @@ void SingleServer::command(const string &cmd) const {
 
 void SingleServer::start_async_read(unique_ptr<bp::async_pipe> &pipe, bool is_stderr,
                                     const function<void(const string &)> &callback) {
-    shared_ptr<vector<char>> buffer = make_shared<vector<char>>(1024);
+    auto buffer = make_shared<vector<char>>(1024);
     pipe->async_read_some(asio::buffer(*buffer),
                           [this, buffer, &pipe, is_stderr, callback](const boost::system::error_code &ec,
                                                                      size_t bytes_transferred) {
@@ -127,8 +141,9 @@ void SingleServer::start_async_read(unique_ptr<bp::async_pipe> &pipe, bool is_st
                                   string output(buffer->data(), bytes_transferred);
                                   callback(output);
                                   this->start_async_read(pipe, is_stderr, callback);
-                              } else {
-                                  cerr << "Read error: " << ec.message() << endl;
+                              } else if (ec != asio::error::eof) {
+                                  cerr << (is_stderr ? "Stderr" : "Stdout")
+                                       << " read error: " << ec.message() << endl;
                               }
                           });
 }

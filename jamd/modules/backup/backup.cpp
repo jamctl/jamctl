@@ -13,7 +13,7 @@ JsonValue load_progress() {
 
     if (file) {
         if (!Json::parseFromStream(builder, file, &progress, &errs)) {
-            spdlog::error("无法解析进度文件: {}"+ errs);
+            spdlog::error("无法解析进度文件: {}" + errs);
         }
     }
     return progress;
@@ -33,7 +33,7 @@ void calculate_sha256_hash(const Path &filename, HashBuffer &outputBuffer) {
     std::ifstream file(filename, ios::binary);
     if (!file) {
         LockGuard lock(log_mutex);
-        spdlog::error("无法打开文件: {}"+ filename.string());
+        spdlog::error("无法打开文件: {}" + filename.string());
         outputBuffer.assign(SHA256_DIGEST_LENGTH, 0);
         return;
     }

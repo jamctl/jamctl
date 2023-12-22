@@ -3,8 +3,10 @@
 JavaSearchThread::JavaSearchThread(Path path, ResultList &result_list, Mutex &lock, Keywords priority_keywords,
                                    bool strict_mode, Keywords excluded_keywords, ExcludedDirs excluded_dirs,
                                    OptionalDepth max_depth)
-        : path_(std::move(path)), result_list_(result_list), lock_(lock), priority_keywords_(std::move(priority_keywords)),
-          strict_mode_(strict_mode), excluded_keywords_(std::move(excluded_keywords)), excluded_dirs_(std::move(excluded_dirs)),
+        : path_(std::move(path)), result_list_(result_list), lock_(lock),
+          priority_keywords_(std::move(priority_keywords)),
+          strict_mode_(strict_mode), excluded_keywords_(std::move(excluded_keywords)),
+          excluded_dirs_(std::move(excluded_dirs)),
           max_depth_(max_depth) {}
 
 void JavaSearchThread::operator()() {
@@ -20,7 +22,7 @@ void JavaSearchThread::search_dirs(const Path &path) {
             auto current_dir = directories.front();
             directories.pop();
 
-            for (const auto &entry : fs::directory_iterator(current_dir)) {
+            for (const auto &entry: fs::directory_iterator(current_dir)) {
                 if (max_depth_ && 0 >= *max_depth_) {
                     break;
                 }
@@ -135,13 +137,13 @@ ResultList parallel_search_java(const std::vector<Path> &paths, const Keywords &
     Mutex lock;
     ThreadPool futures;
 
-    for (const auto &path : paths) {
+    for (const auto &path: paths) {
         futures.emplace_back(
                 std::async(std::launch::async, JavaSearchThread(path, result_list, lock, priorities, strict,
                                                                 excluded_keywords, excluded_dirs, max_depth)));
     }
 
-    for (auto &future : futures) {
+    for (auto &future: futures) {
         future.get();
     }
 

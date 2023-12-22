@@ -9,8 +9,7 @@
 
 enum class ServerType {
     JAVA,
-    PYTHON,
-    NODEJS
+    BINARY
 };
 
 struct SingleServer {
