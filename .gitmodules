@@ -1,0 +1,3 @@
+[submodule "modules/tmsmt"]
+	path = modules/tmsmt
+	url = git@github.com:MSLXTeam/tmsmt.core.git
