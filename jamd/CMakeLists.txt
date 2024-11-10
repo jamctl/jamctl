@@ -6,10 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
+find_package(yaml-cpp CONFIG REQUIRED)
+find_package(JsonCpp CONFIG REQUIRED)
 find_package(Drogon REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(PostgreSQL REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 add_executable(jamd main.cpp
         modules/backup/backup.cpp
@@ -24,14 +25,18 @@ add_executable(jamd main.cpp
         controllers/User.h
         controllers/Instances.cpp
         controllers/User.cpp
+        modules/manager/ConfigFileManager/ConfigFileManager.cpp
+        modules/manager/ConfigFileManager/ConfigFileManager.h
 )
 
 if (MSVC)
-    target_compile_options(jamd PRIVATE /experimental:module)
+    target_compile_options(jamd PRIVATE /experimental:module /D_WIN32_WINNT=0x0A00)
 else ()
     target_compile_options(jamd PRIVATE -fmodules-ts)
 endif ()
 
 add_subdirectory("modules/tmsmt")
 
-target_link_libraries(jamd PRIVATE Boost::filesystem PostgreSQL::PostgreSQL Drogon::Drogon spdlog::spdlog_header_only yaml-cpp::yaml-cpp tmsmt_core_static OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(jamd PRIVATE Boost::filesystem PostgreSQL::PostgreSQL yaml-cpp::yaml-cpp  JsonCpp::JsonCpp Drogon::Drogon spdlog::spdlog_header_only tmsmt_core_static OpenSSL::SSL OpenSSL::Crypto)
+
+file(COPY config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

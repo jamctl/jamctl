@@ -3,7 +3,8 @@
 namespace jamd::managers {
     InstanceManager::InstanceManager() = default;
 
-    void InstanceManager::add(SingleServer instance) {
+    void InstanceManager::add(const ::Instance &instance) {
+
     }
 
     void InstanceManager::add(const jamd::structs::ConfObj &configObj) {
@@ -15,7 +16,8 @@ namespace jamd::managers {
     void InstanceManager::remove(int id) {
     }
 
-    void InstanceManager::remove(const Instances &instances) {
+    void InstanceManager::remove(const InstanceList &instances) {
+
     }
 
     void InstanceManager::launch(const String &name) {
@@ -27,7 +29,7 @@ namespace jamd::managers {
     void InstanceManager::launch(::Instance instance) {
     }
 
-    void InstanceManager::launch(const Instances &instances) {
+    void InstanceManager::launch(const InstanceList &instances) {
     }
 
     void InstanceManager::relaunch(const ::Instance &instance) {
@@ -39,7 +41,7 @@ namespace jamd::managers {
     void InstanceManager::relaunch(int id) {
     }
 
-    void InstanceManager::relaunch(const Instances &instances) {
+    void InstanceManager::relaunch(const InstanceList &instances) {
     }
 
     InstanceLogs InstanceManager::log(int id) {
@@ -47,6 +49,14 @@ namespace jamd::managers {
     }
 
     InstanceLogs InstanceManager::log(const String &name) {
+        return {};
+    }
+
+    std::optional<const Instance> InstanceManager::getInstance(int id) {
+        return {};
+    }
+
+    std::optional<const Instance> InstanceManager::getInstance(const String &name) {
         return {};
     }
 }
