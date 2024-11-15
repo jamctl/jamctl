@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <memory>
 
 namespace jamd {
     template<typename T>
@@ -23,4 +22,3 @@ namespace jamd {
         virtual ~Singleton() = default;
     };
 }
-

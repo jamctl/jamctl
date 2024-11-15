@@ -57,6 +57,7 @@ namespace jamd::managers {
 
     private:
         InstanceManager();
+
         InstanceObjs instances;
         InstanceList instanceIds;
     };

@@ -37,6 +37,6 @@ endif ()
 
 add_subdirectory("modules/tmsmt")
 
-target_link_libraries(jamd PRIVATE Boost::filesystem PostgreSQL::PostgreSQL yaml-cpp::yaml-cpp  JsonCpp::JsonCpp Drogon::Drogon spdlog::spdlog_header_only tmsmt_core_static OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(jamd PRIVATE Boost::filesystem PostgreSQL::PostgreSQL yaml-cpp::yaml-cpp JsonCpp::JsonCpp Drogon::Drogon spdlog::spdlog_header_only tmsmt_core_static OpenSSL::SSL OpenSSL::Crypto)
 
 file(COPY config.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

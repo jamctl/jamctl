@@ -6,7 +6,7 @@ void Instances::initPathRouting() {
 
 void Instances::StartInstance(const HttpRequestPtr &req,
                               std::function<void(const HttpResponsePtr &)> &&callback) {
-    auto resp=HttpResponse::newHttpResponse();
+    auto resp = HttpResponse::newHttpResponse();
     resp->setStatusCode(static_cast<HttpStatusCode>(200));
     callback(resp);
 }

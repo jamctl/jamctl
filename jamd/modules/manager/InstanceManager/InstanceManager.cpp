@@ -4,7 +4,6 @@ namespace jamd::managers {
     InstanceManager::InstanceManager() = default;
 
     void InstanceManager::add(const ::Instance &instance) {
-
     }
 
     void InstanceManager::add(const jamd::structs::ConfObj &configObj) {
@@ -17,7 +16,6 @@ namespace jamd::managers {
     }
 
     void InstanceManager::remove(const InstanceList &instances) {
-
     }
 
     void InstanceManager::launch(const String &name) {
