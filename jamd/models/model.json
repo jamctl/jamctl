@@ -1,10 +1,10 @@
 {
   "rdbms": "postgresql",
-  "host": "127.0.0.1",
+  "host": "10.4.9.58",
   "port": 5432,
   "dbname": "jamd",
   "schema": "public",
-  "user": "jamd",
-  "password": "dmja",
+  "user": "mojave",
+  "password": "12345678",
   "tables": []
 }

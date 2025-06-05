@@ -4,11 +4,9 @@
 
 using namespace drogon;
 
-class User final : public drogon::HttpController<User> {
+class User final : public HttpController<User> {
 public:
-    static void initPathRouting();
+    METHOD_LIST_BEGIN
 
-    // your declaration of processing function maybe like this:
-    // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);
-    // void your_method_name(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, double p1, int p2) const;
+    METHOD_LIST_END
 };

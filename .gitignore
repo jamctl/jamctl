@@ -3,3 +3,5 @@ cmake-build-debug-msvc
 cmake-build-minsizerel
 cmake-build-release
 .idea
+jamd/docs/_build
+jamd/docs/doxygen
