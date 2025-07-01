@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message StartInstanceRequest {
+  uint32 id = 1;
+  optional string name = 2;
+}
+
+message LaunchResult {
+  bool success = 1;
+  sint32 code = 2;
+  string message = 3;
+}
+
+service LaunchInstance {
+  rpc Launch (StartInstanceRequest) returns (LaunchResult);
+}

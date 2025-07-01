@@ -11,5 +11,3 @@ create table instances
     created integer not null,
     lastup  integer not null
 );
-
-

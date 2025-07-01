@@ -9,4 +9,3 @@ create table users
     constraint id
         primary key (name, nickname)
 );
-

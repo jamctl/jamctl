@@ -3,6 +3,8 @@
 #include <spdlog/spdlog.h>
 #include <drogon/drogon.h>
 
+#include "GrpcServer.h"
+
 using std::string;
 namespace fs = std::filesystem;
 
@@ -19,6 +21,9 @@ int main(int argc, char* argv[], char* envp[])
         std::cerr << "Log initialization failed: " << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
-    drogon::app().loadConfigFile("config.yaml").run();
+    drogon::app().loadConfigFile("config.yaml");
+    GrpcServer::Instance().Start("127.0.0.1:9001");
+    drogon::app().run();
+    GrpcServer::Instance().Stop();
     return 0;
 }

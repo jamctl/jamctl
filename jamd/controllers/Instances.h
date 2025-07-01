@@ -7,7 +7,6 @@
 
 #include "../structs/api.h"
 #include "../ext/extFuns.h"
-#include "../ext/marcos.h"
 
 using namespace drogon;
 using InstanceManager = jamd::managers::InstanceManager;

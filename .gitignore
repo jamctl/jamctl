@@ -5,3 +5,5 @@ cmake-build-release
 .idea
 jamd/docs/_build
 jamd/docs/doxygen
+jamd/modules/grpc/*.pb.cc
+jamd/modules/grpc/*.pb.h
