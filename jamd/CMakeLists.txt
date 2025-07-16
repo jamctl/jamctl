@@ -55,7 +55,7 @@ find_package(Boost CONFIG REQUIRED COMPONENTS filesystem process)
 find_package(hiredis REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(jsoncpp CONFIG REQUIRED)
-find_package(Drogon REQUIRED)
+find_package(Drogon CONFIG REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(PostgreSQL REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -81,20 +81,27 @@ add_executable(jamd main.cpp
         models/Instances.h
         models/Users.cc
         models/Users.h
+        plugins/autoAddHeaders/AutoAddHeaders.cpp
+        plugins/autoAddHeaders/AutoAddHeaders.h
         plugins/log/RequestLogger.h
         plugins/log/RequestLogger.cpp
+        plugins/checkFeatureEnabled/CheckFeatureEnabled.cpp
+        plugins/checkFeatureEnabled/CheckFeatureEnabled.h
+        ext/file.h
+        ext/marcos/ktstyle.h
+        ext/marcos/orm.h
+        ext/marcos/drogon.h
         ext/extFuns.h
-        ext/marcos.h
         ext/alias.h
-        ext/autoSerialization.h
+        ext/jsonSerialization.h
+        ext/yamlSerialization.h
+        ext/tomlSerialization.h
         ext/styledORM.h
         structs/api/LaunchResult.h
         structs/api.h
         structs/config/ServerConfig.h
         structs/config/JamdConfig.h
         structs/config.h
-        plugins/autoAddHeaders/AutoAddHeaders.cpp
-        plugins/autoAddHeaders/AutoAddHeaders.h
         ${GENERATED_SOURCES}
 )
 
@@ -122,4 +129,7 @@ target_link_libraries(jamd PRIVATE
         ${_GRPC_GRPCPP}
 )
 
-file(COPY config.yaml DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
+file(COPY drogon.yaml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY jamd.yaml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(GLOB allConfigFiles "${CMAKE_CURRENT_SOURCE_DIR}/config/*")
+file(COPY ${allConfigFiles} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/config")

@@ -29,7 +29,7 @@ public:
                 {
                     server_->Wait(); // 等待 gRPC 服务器运行
                 });
-                spdlog::info(std::format("gRPC Server started on {}", address));
+                spdlog::info("gRPC Server listening on {}", address);
             }
             else
             {

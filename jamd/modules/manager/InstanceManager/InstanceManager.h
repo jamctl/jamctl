@@ -5,6 +5,7 @@
 #include "SingleServer.hpp"
 #include "../../../utils/Singleton.h"
 #include "../../../structs/config.h"
+#include "../../ext/alias.h"
 
 using Instance = SingleServer;
 using InstanceObjs = Vector<Instance>;

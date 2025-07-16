@@ -1,17 +1,21 @@
 #pragma once
-
 #include <drogon/HttpMiddleware.h>
 #include <spdlog/spdlog.h>
 
 #include "../../ext/alias.h"
-#include "../../ext/marcos/ktstyle.h"
+#include "../../structs/config.h"
+
+
+static std::unordered_map<String, bool JamdFeaturesConfig::*> featureMap = {
+    {"/user/register", &JamdFeaturesConfig::enable_register},
+};
 
 namespace jamd::plugins
 {
-    class RequestLogger final : public drogon::HttpMiddleware<RequestLogger>
+    class CheckFeatureEnabled final : public drogon::HttpMiddleware<CheckFeatureEnabled>
     {
     public:
-        RequestLogger() = default;
+        CheckFeatureEnabled() = default;
 
         void invoke(const Request& req,
                     drogon::MiddlewareNextCallback&& nextCb,

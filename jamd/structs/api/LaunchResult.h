@@ -9,7 +9,7 @@
 
 #pragma once
 #include "../../ext/alias.h"
-#include "../../ext/autoSerialization.h"
+#include "../../ext/jsonSerialization.h"
 
 namespace jamd::structs::api::instances
 {
@@ -18,7 +18,7 @@ namespace jamd::structs::api::instances
     * @brief 储存启动实例API的结果
     */
 
-    APIStruct(LaunchResult,
+    APIStruct(LaunchResult, // NOLINT(*-pro-type-member-init)
         (bool, success),
         (int, code),
         (String, message))

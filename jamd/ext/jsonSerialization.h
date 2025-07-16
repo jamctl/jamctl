@@ -24,7 +24,7 @@ void fromJson(const Json::Value& json, T& value);
 template <>
 inline Json::Value toJson<int>(const int& value)
 {
-    return Json::Value(value);
+    return {value};
 }
 
 template <>
@@ -36,7 +36,7 @@ inline void fromJson<int>(const Json::Value& json, int& value)
 template <>
 inline Json::Value toJson<bool>(const bool& value)
 {
-    return Json::Value(value);
+    return {value};
 }
 
 template <>
@@ -49,7 +49,7 @@ inline void fromJson<bool>(const Json::Value& json, bool& value)
 template <>
 inline Json::Value toJson<String>(const String& value)
 {
-    return Json::Value(value);
+    return {value};
 }
 
 template <>
@@ -144,7 +144,7 @@ Json::Value toJson(const std::variant<Ts...>& va)
     struct NAME {                                                             \
         BOOST_HANA_DEFINE_STRUCT(NAME, __VA_ARGS__);                          \
                                                                               \
-        Json::Value toJson() const {                                          \
+        [[nodiscard]] Json::Value toJson() const {                                          \
             Json::Value json;                                                 \
             hana::for_each(hana::keys(*this), [&](auto key) {                 \
                 constexpr auto name = hana::to<char const*>(key);             \

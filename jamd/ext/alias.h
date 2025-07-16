@@ -13,6 +13,7 @@
 template <typename T>
 using Function = std::function<T>;
 using String = std::string;
+using StringView = std::string_view;
 using Path = std::filesystem::path;
 
 // stdptrs
@@ -39,6 +40,8 @@ template <typename K, typename V, typename C = std::less<K>, typename A = std::a
 using Map = const std::map<K, V, C, A>;
 template <typename K, typename V, typename C = std::less<K>, typename A = std::allocator<std::pair<const K, V>>>
 using MutableMap = std::map<K, V, C, A>;
+template <typename K, typename V, typename C = std::less<K>, typename A = std::allocator<std::pair<const K, V>>>
+using UnorderedMap = std::unordered_map<K, V, C, A>;
 template <typename K, typename V>
 using Pair = std::pair<K, V>;
 template <typename T>

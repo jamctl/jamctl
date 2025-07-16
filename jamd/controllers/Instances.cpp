@@ -4,7 +4,8 @@
 #include <drogon/orm/Mapper.h>
 
 #include "../ext/styledORM.h"
-#define eq ,CompareOperator::EQ,
+#include "../ext/marcos/orm.h"
+
 #define var auto
 #define val const auto
 

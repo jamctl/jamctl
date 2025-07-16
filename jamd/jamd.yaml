@@ -1,0 +1,4 @@
+instances:
+  save_path: config
+features:
+  enable_register: false

@@ -92,7 +92,7 @@ void b_copy_file(const Path& src, const Path& dst)
     if (!srcStream || !dstStream)
     {
         LockGuard lock(log_mutex);
-        spdlog::error(std::format("打开文件错误: {} -> {}", src.string(), dst.string()));
+        spdlog::error("打开文件错误: {} -> {}", src.string(), dst.string());
         return;
     }
 
@@ -100,7 +100,7 @@ void b_copy_file(const Path& src, const Path& dst)
     fs::permissions(dst, fs::status(src).permissions());
 
     LockGuard lock(log_mutex);
-    spdlog::info(std::format("已复制: {} 到 {}", src.string(), dst.string()));
+    spdlog::info("已复制: {} 到 {}", src.string(), dst.string());
 }
 
 // 判断文件是否已修改

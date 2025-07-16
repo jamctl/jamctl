@@ -1,12 +1,14 @@
 #pragma once
 
 #include <drogon/HttpAppFramework.h>
+#include <drogon/HttpController.h>
 #include <spdlog/spdlog.h>
 
 #include "../modules/manager/InstanceManager/InstanceManager.h"
 
 #include "../structs/api.h"
 #include "../ext/extFuns.h"
+#include "../ext/marcos/drogon.h"
 
 using namespace drogon;
 using InstanceManager = jamd::managers::InstanceManager;

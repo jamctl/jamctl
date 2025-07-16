@@ -26,6 +26,7 @@ namespace jamd::managers
 
     int InstanceManager::launch(const String& name)
     {
+        return {};
     }
 
     int InstanceManager::launch(int id)
@@ -38,22 +39,27 @@ namespace jamd::managers
 
     int InstanceManager::launch(const InstanceList& instances)
     {
+        return {};
     }
 
     int InstanceManager::relaunch(const ::Instance& instance)
     {
+        return {};
     }
 
     int InstanceManager::relaunch(const String& name)
     {
+        return {};
     }
 
     int InstanceManager::relaunch(int id)
     {
+        return {};
     }
 
     int InstanceManager::relaunch(const InstanceList& instances)
     {
+        return {};
     }
 
     InstanceLogs InstanceManager::log(int id)
@@ -66,12 +72,12 @@ namespace jamd::managers
         return {};
     }
 
-    std::optional<std::reference_wrapper<Instance>> InstanceManager::getInstance(int id)
+    std::optional<RefWrapper<Instance>> InstanceManager::getInstance(int id)
     {
         return {};
     }
 
-    std::optional<std::reference_wrapper<Instance>> InstanceManager::getInstance(const String& name)
+    std::optional<RefWrapper<Instance>> InstanceManager::getInstance(const String& name)
     {
         return {};
     }

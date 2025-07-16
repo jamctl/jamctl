@@ -6,9 +6,11 @@
 
 #include <boost/asio.hpp>
 #include <boost/process.hpp>
+#include <boost/filesystem.hpp>
+#include <spdlog/spdlog.h>
 
 #include "../../../ext/alias.h"
-#include "../../../ext/marcos.h"
+#include "../../../ext/marcos/ktstyle.h"
 
 namespace asio = boost::asio;
 namespace bp = boost::process::v2;
@@ -31,7 +33,7 @@ class SingleServer
     String executor;
     String server_path;
     String server_file;
-    Vector<String> server_options;
+    Vector<StringView> server_options;
 
     IOContext CTX;
     WritablePipe input{CTX};
@@ -57,7 +59,7 @@ public:
                           const int xmx = 4,
                           String server_path = "",
                           String server_file = "server.jar",
-                          Vector<String> server_options = {})
+                          Vector<StringView> server_options = {})
         : type_is_java(type_is_java),
           xms(xms),
           xmx(xmx),
@@ -97,12 +99,14 @@ public:
         try
         {
             process = make_unique<bp::process>(
-                bp::process(CTX, bf::path(server_file_path), args,
+                bp::process(CTX,
+                            fs::path(server_file_path),
+                            args,
                             bp::process_stdio{input, output, output}));
         }
         catch (const exception& e)
         {
-            cerr << "Failed to start server: " << e.what() << endl;
+            spdlog::error("Failed to start instance: {}", e.what());
             return 1;
         }
 
