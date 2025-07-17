@@ -1,4 +1,10 @@
 instances:
   save_path: config
 features:
-  enable_register: false
+  enable_register: true
+security:
+  argon2:
+    timecost: 2
+    memcost: 65536
+    parallelism: 1
+    length: 32

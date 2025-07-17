@@ -21,7 +21,6 @@ public:
         GET("/start?instance={1:id|name}", Instances::StartInstance)
     METHOD_LIST_END
 
-    // 使用协程来处理请求
     static void StartInstance(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr&)>&& callback,
                               const String& target);
 };

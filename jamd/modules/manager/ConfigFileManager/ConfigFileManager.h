@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../../../structs/config/JamdConfig.h"
 #include "../../../utils/Singleton.h"
 

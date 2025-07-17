@@ -2,8 +2,13 @@
 
 #include "../../ext/marcos/ktstyle.h"
 #include "../../ext/extFuns.h"
+#include "../../modules/manager/ConfigFileManager/ConfigFileManager.h"
 
 using namespace jamd::plugins;
+
+static std::unordered_map<String, bool JamdFeaturesConfig::*> featureMap = {
+    {"/user/register", &JamdFeaturesConfig::enable_register},
+};
 
 void CheckFeatureEnabled::invoke(const Request& req,
                                  drogon::MiddlewareNextCallback&& nextCb,
@@ -13,11 +18,23 @@ void CheckFeatureEnabled::invoke(const Request& req,
     {
         val path = req->path();
         if (path == "/")
+        {
             callback(resp);
+            return;
+        }
         try
         {
-            if (!featureMap.at(path))
-                callback(drogon::HttpResponse::newHttpResponse(drogon::k403Forbidden, drogon::ContentType::CT_NONE));
+            if (!(managers::ConfigFileManager::Instance().daemonConfig.features.*featureMap.at(path)))
+            {
+                const auto r = drogon::HttpResponse::newHttpResponse();
+                r->setStatusCode(drogon::k418ImATeapot);
+                r->setBody("Feature disabled");
+                callback(r);
+            }
+            else
+            {
+                callback(resp);
+            }
         }
         catch (std::out_of_range& _)
         {

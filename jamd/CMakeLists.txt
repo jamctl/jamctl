@@ -59,6 +59,7 @@ find_package(Drogon CONFIG REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(PostgreSQL REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(unofficial-argon2 CONFIG REQUIRED)
 
 add_executable(jamd main.cpp
         modules/backup/backup.cpp
@@ -103,6 +104,7 @@ add_executable(jamd main.cpp
         structs/config/JamdConfig.h
         structs/config.h
         ${GENERATED_SOURCES}
+        modules/PasswordHasher.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)
@@ -127,6 +129,7 @@ target_link_libraries(jamd PRIVATE
         grpc
         grpc++_reflection
         ${_GRPC_GRPCPP}
+        unofficial::argon2::libargon2
 )
 
 file(COPY drogon.yaml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

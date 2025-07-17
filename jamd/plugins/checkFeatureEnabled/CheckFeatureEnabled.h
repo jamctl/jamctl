@@ -5,11 +5,6 @@
 #include "../../ext/alias.h"
 #include "../../structs/config.h"
 
-
-static std::unordered_map<String, bool JamdFeaturesConfig::*> featureMap = {
-    {"/user/register", &JamdFeaturesConfig::enable_register},
-};
-
 namespace jamd::plugins
 {
     class CheckFeatureEnabled final : public drogon::HttpMiddleware<CheckFeatureEnabled>

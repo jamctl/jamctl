@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="jamd" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="jamd" TARGET_NAME="jamd" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="jamd" RUN_TARGET_NAME="jamd">
+    <method v="2">
+      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="未命名" run_configuration_type="ShConfigurationType" />
+    </method>
+  </configuration>
+</component>
