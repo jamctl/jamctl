@@ -56,3 +56,10 @@ inline Vector<String> split(const String& str, char delim, bool skip_empty = tru
     }
     return result;
 }
+
+template <typename T> Json::Value JValue(const String& name, T value)
+{
+    auto json = Json::Value();
+    json[name] = value;
+    return json;
+}

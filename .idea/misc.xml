@@ -12,6 +12,7 @@
     </sourceRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/cmake-build-debug-mingwcustomcmake" />
+      <file path="$PROJECT_DIR$/jamd/vcpkg_installed" />
     </excludeRoots>
   </component>
   <component name="XMakeProjectSettings">

@@ -1,0 +1,5 @@
+name: test1
+executor: "/usr/bin/java"
+params: [""]
+xms: 1
+xmx: 4

@@ -12,5 +12,5 @@ public:
         POST("/register", UserRegister)
     METHOD_LIST_END
 
-    static void UserRegister(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr&)>&& callback);
+    static void UserRegister(const HttpRequestPtr& req, Function<void (const HttpResponsePtr&)>&& callback);
 };

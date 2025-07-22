@@ -96,7 +96,6 @@ add_executable(jamd main.cpp
         ext/alias.h
         ext/jsonSerialization.h
         ext/yamlSerialization.h
-        ext/tomlSerialization.h
         ext/styledORM.h
         structs/api/LaunchResult.h
         structs/api.h
@@ -105,6 +104,7 @@ add_executable(jamd main.cpp
         structs/config.h
         ${GENERATED_SOURCES}
         modules/PasswordHasher.h
+        structs/api/RegisterInfo.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)
@@ -126,9 +126,8 @@ target_link_libraries(jamd PRIVATE
         spdlog::spdlog_header_only
         OpenSSL::SSL
         OpenSSL::Crypto
-        grpc
-        grpc++_reflection
         ${_GRPC_GRPCPP}
+        gRPC::grpc++_reflection
         unofficial::argon2::libargon2
 )
 

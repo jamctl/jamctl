@@ -1,0 +1,19 @@
+{
+  "name": "jamd",
+  "version": "0.1.0",
+  "dependencies": [
+    "boost",
+    "hiredis",
+    "jsoncpp",
+    "spdlog",
+    "libpqxx",
+    "openssl",
+    "argon2",
+    "grpc",
+    {
+      "name": "drogon",
+      "default-features": false,
+      "features": [ "ctl","orm","postgres","redis","yaml" ]
+    }
+  ]
+}

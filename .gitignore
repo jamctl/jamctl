@@ -7,3 +7,4 @@ jamd/docs/_build
 jamd/docs/doxygen
 jamd/modules/grpc/*.pb.cc
 jamd/modules/grpc/*.pb.h
+jamd/vcpkg_installed

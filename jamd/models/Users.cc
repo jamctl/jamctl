@@ -16,20 +16,20 @@ using namespace drogon_model::jamd;
 const std::string Users::Cols::_name = "\"name\"";
 const std::string Users::Cols::_nickname = "\"nickname\"";
 const std::string Users::Cols::_password = "\"password\"";
-const std::string Users::Cols::_primary_email = "\"primary_email\"";
+const std::string Users::Cols::_email = "\"email\"";
 const std::string Users::Cols::_extra_emails = "\"extra_emails\"";
 const std::string Users::Cols::_group = "\"group\"";
 const std::vector<std::string> Users::primaryKeyName = {"name","nickname"};
 const bool Users::hasPrimaryKey = true;
 const std::string Users::tableName = "\"users\"";
 
-const std::vector<Users::MetaData> Users::metaData_={
-{"name","std::string","text",0,false,true,true},
-{"nickname","std::string","text",0,false,true,true},
-{"password","std::string","text",0,false,false,false},
-{"primary_email","std::string","text",0,false,false,false},
-{"extra_emails","std::string","ARRAY",0,false,false,false},
-{"group","std::string","text",0,false,false,false}
+const std::vector<typename Users::MetaData> Users::metaData_={
+{"name","std::string","text",0,0,1,1},
+{"nickname","std::string","text",0,0,1,1},
+{"password","std::string","text",0,0,0,0},
+{"email","std::string","text",0,0,0,0},
+{"extra_emails","std::string","ARRAY",0,0,0,0},
+{"group","std::string","text",0,0,0,0}
 };
 const std::string &Users::getColumnName(size_t index) noexcept(false)
 {
@@ -52,9 +52,9 @@ Users::Users(const Row &r, const ssize_t indexOffset) noexcept
         {
             password_=std::make_shared<std::string>(r["password"].as<std::string>());
         }
-        if(!r["primary_email"].isNull())
+        if(!r["email"].isNull())
         {
-            primaryEmail_=std::make_shared<std::string>(r["primary_email"].as<std::string>());
+            email_=std::make_shared<std::string>(r["email"].as<std::string>());
         }
         if(!r["extra_emails"].isNull())
         {
@@ -67,13 +67,14 @@ Users::Users(const Row &r, const ssize_t indexOffset) noexcept
     }
     else
     {
-        const size_t offset = static_cast<size_t>(indexOffset);
+        size_t offset = (size_t)indexOffset;
         if(offset + 6 > r.size())
         {
             LOG_FATAL << "Invalid SQL result for this model";
             return;
         }
-        size_t index = offset + 0;
+        size_t index;
+        index = offset + 0;
         if(!r[index].isNull())
         {
             name_=std::make_shared<std::string>(r[index].as<std::string>());
@@ -91,7 +92,7 @@ Users::Users(const Row &r, const ssize_t indexOffset) noexcept
         index = offset + 3;
         if(!r[index].isNull())
         {
-            primaryEmail_=std::make_shared<std::string>(r[index].as<std::string>());
+            email_=std::make_shared<std::string>(r[index].as<std::string>());
         }
         index = offset + 4;
         if(!r[index].isNull())
@@ -143,7 +144,7 @@ Users::Users(const Json::Value &pJson, const std::vector<std::string> &pMasquera
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            primaryEmail_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            email_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
@@ -190,12 +191,12 @@ Users::Users(const Json::Value &pJson) noexcept(false)
             password_=std::make_shared<std::string>(pJson["password"].asString());
         }
     }
-    if(pJson.isMember("primary_email"))
+    if(pJson.isMember("email"))
     {
         dirtyFlag_[3]=true;
-        if(!pJson["primary_email"].isNull())
+        if(!pJson["email"].isNull())
         {
-            primaryEmail_=std::make_shared<std::string>(pJson["primary_email"].asString());
+            email_=std::make_shared<std::string>(pJson["email"].asString());
         }
     }
     if(pJson.isMember("extra_emails"))
@@ -251,7 +252,7 @@ void Users::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[3] = true;
         if(!pJson[pMasqueradingVector[3]].isNull())
         {
-            primaryEmail_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
+            email_=std::make_shared<std::string>(pJson[pMasqueradingVector[3]].asString());
         }
     }
     if(!pMasqueradingVector[4].empty() && pJson.isMember(pMasqueradingVector[4]))
@@ -296,12 +297,12 @@ void Users::updateByJson(const Json::Value &pJson) noexcept(false)
             password_=std::make_shared<std::string>(pJson["password"].asString());
         }
     }
-    if(pJson.isMember("primary_email"))
+    if(pJson.isMember("email"))
     {
         dirtyFlag_[3] = true;
-        if(!pJson["primary_email"].isNull())
+        if(!pJson["email"].isNull())
         {
-            primaryEmail_=std::make_shared<std::string>(pJson["primary_email"].asString());
+            email_=std::make_shared<std::string>(pJson["email"].asString());
         }
     }
     if(pJson.isMember("extra_emails"))
@@ -324,7 +325,7 @@ void Users::updateByJson(const Json::Value &pJson) noexcept(false)
 
 const std::string &Users::getValueOfName() const noexcept
 {
-    static const auto defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(name_)
         return *name_;
     return defaultValue;
@@ -346,7 +347,7 @@ void Users::setName(std::string &&pName) noexcept
 
 const std::string &Users::getValueOfNickname() const noexcept
 {
-    static const auto defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(nickname_)
         return *nickname_;
     return defaultValue;
@@ -368,7 +369,7 @@ void Users::setNickname(std::string &&pNickname) noexcept
 
 const std::string &Users::getValueOfPassword() const noexcept
 {
-    static const auto defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(password_)
         return *password_;
     return defaultValue;
@@ -393,36 +394,36 @@ void Users::setPasswordToNull() noexcept
     dirtyFlag_[2] = true;
 }
 
-const std::string &Users::getValueOfPrimaryEmail() const noexcept
+const std::string &Users::getValueOfEmail() const noexcept
 {
-    static const auto defaultValue = std::string();
-    if(primaryEmail_)
-        return *primaryEmail_;
+    static const std::string defaultValue = std::string();
+    if(email_)
+        return *email_;
     return defaultValue;
 }
-const std::shared_ptr<std::string> &Users::getPrimaryEmail() const noexcept
+const std::shared_ptr<std::string> &Users::getEmail() const noexcept
 {
-    return primaryEmail_;
+    return email_;
 }
-void Users::setPrimaryEmail(const std::string &pPrimaryEmail) noexcept
+void Users::setEmail(const std::string &pEmail) noexcept
 {
-    primaryEmail_ = std::make_shared<std::string>(pPrimaryEmail);
+    email_ = std::make_shared<std::string>(pEmail);
     dirtyFlag_[3] = true;
 }
-void Users::setPrimaryEmail(std::string &&pPrimaryEmail) noexcept
+void Users::setEmail(std::string &&pEmail) noexcept
 {
-    primaryEmail_ = std::make_shared<std::string>(std::move(pPrimaryEmail));
+    email_ = std::make_shared<std::string>(std::move(pEmail));
     dirtyFlag_[3] = true;
 }
-void Users::setPrimaryEmailToNull() noexcept
+void Users::setEmailToNull() noexcept
 {
-    primaryEmail_.reset();
+    email_.reset();
     dirtyFlag_[3] = true;
 }
 
 const std::string &Users::getValueOfExtraEmails() const noexcept
 {
-    static const auto defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(extraEmails_)
         return *extraEmails_;
     return defaultValue;
@@ -449,7 +450,7 @@ void Users::setExtraEmailsToNull() noexcept
 
 const std::string &Users::getValueOfGroup() const noexcept
 {
-    static const auto defaultValue = std::string();
+    static const std::string defaultValue = std::string();
     if(group_)
         return *group_;
     return defaultValue;
@@ -477,7 +478,7 @@ void Users::setGroupToNull() noexcept
 void Users::updateId(const uint64_t id)
 {
 }
- Users::PrimaryKeyType Users::getPrimaryKey() const
+typename Users::PrimaryKeyType Users::getPrimaryKey() const
 {
     return std::make_tuple(*name_,*nickname_);
 }
@@ -488,7 +489,7 @@ const std::vector<std::string> &Users::insertColumns() noexcept
         "name",
         "nickname",
         "password",
-        "primary_email",
+        "email",
         "extra_emails",
         "group"
     };
@@ -532,9 +533,9 @@ void Users::outputArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[3])
     {
-        if(getPrimaryEmail())
+        if(getEmail())
         {
-            binder << getValueOfPrimaryEmail();
+            binder << getValueOfEmail();
         }
         else
         {
@@ -632,9 +633,9 @@ void Users::updateArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[3])
     {
-        if(getPrimaryEmail())
+        if(getEmail())
         {
-            binder << getValueOfPrimaryEmail();
+            binder << getValueOfEmail();
         }
         else
         {
@@ -691,13 +692,13 @@ Json::Value Users::toJson() const
     {
         ret["password"]=Json::Value();
     }
-    if(getPrimaryEmail())
+    if(getEmail())
     {
-        ret["primary_email"]=getValueOfPrimaryEmail();
+        ret["email"]=getValueOfEmail();
     }
     else
     {
-        ret["primary_email"]=Json::Value();
+        ret["email"]=Json::Value();
     }
     if(getExtraEmails())
     {
@@ -759,9 +760,9 @@ Json::Value Users::toMasqueradedJson(
         }
         if(!pMasqueradingVector[3].empty())
         {
-            if(getPrimaryEmail())
+            if(getEmail())
             {
-                ret[pMasqueradingVector[3]]=getValueOfPrimaryEmail();
+                ret[pMasqueradingVector[3]]=getValueOfEmail();
             }
             else
             {
@@ -817,13 +818,13 @@ Json::Value Users::toMasqueradedJson(
     {
         ret["password"]=Json::Value();
     }
-    if(getPrimaryEmail())
+    if(getEmail())
     {
-        ret["primary_email"]=getValueOfPrimaryEmail();
+        ret["email"]=getValueOfEmail();
     }
     else
     {
-        ret["primary_email"]=Json::Value();
+        ret["email"]=Json::Value();
     }
     if(getExtraEmails())
     {
@@ -871,9 +872,9 @@ bool Users::validateJsonForCreation(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(2, "password", pJson["password"], err, true))
             return false;
     }
-    if(pJson.isMember("primary_email"))
+    if(pJson.isMember("email"))
     {
-        if(!validJsonOfField(3, "primary_email", pJson["primary_email"], err, true))
+        if(!validJsonOfField(3, "email", pJson["email"], err, true))
             return false;
     }
     if(pJson.isMember("extra_emails"))
@@ -991,9 +992,9 @@ bool Users::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(2, "password", pJson["password"], err, false))
             return false;
     }
-    if(pJson.isMember("primary_email"))
+    if(pJson.isMember("email"))
     {
-        if(!validJsonOfField(3, "primary_email", pJson["primary_email"], err, false))
+        if(!validJsonOfField(3, "email", pJson["email"], err, false))
             return false;
     }
     if(pJson.isMember("extra_emails"))
