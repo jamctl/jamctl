@@ -8,7 +8,7 @@ namespace jamd::managers
     {
     }
 
-    void InstanceManager::add(const structs::config::ServerConfig& configObj)
+    void InstanceManager::add(const ServerConfig& configObj)
     {
     }
 

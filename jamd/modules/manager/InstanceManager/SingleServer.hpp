@@ -10,14 +10,15 @@
 #include <spdlog/spdlog.h>
 
 #include "../../../ext/alias.h"
+#include "../../../ext/extFuns.h"
 #include "../../../ext/marcos/ktstyle.h"
+#include "../../parser/interfaces/ILogParser.h"
 
 namespace asio = boost::asio;
 namespace bp = boost::process::v2;
 namespace fs = std::filesystem;
 namespace bf = boost::filesystem;
 using std::move, std::exception;
-using std::endl, std::cerr, std::cout, std::cin;
 using std::to_string, std::unique_ptr, std::make_unique, std::make_shared;
 
 /**
@@ -41,38 +42,47 @@ class SingleServer
     ReadablePipe error{CTX};
 
     UniquePtr<bp::process> process;
+    Thread io_thread;
+    bool done;
+    MutableList<String> command_line;
+    MutableList<UniquePtr<LogParserInterface>> log_parsers;
 
 public:
     /**
      * @brief 构造函数
      * @param type_is_java 是否为Java服务器（默认true）
-     * @param executor 执行器路径（默认"java"）
+     * @param executor 执行器路径及参数（默认"java"）
      * @param xms 初始堆内存（GB，默认1）
      * @param xmx 最大堆内存（GB，默认4）
-     * @param server_path 服务器工作目录路径
-     * @param server_file 服务器文件名（如server.jar）
+     * @param work_dir 服务器工作目录路径
+     * @param jar_file 服务器JAR文件名（如server.jar,仅在type_is_java为true时有实际作用）
      * @param server_options 附加启动参数
      */
     explicit SingleServer(const bool type_is_java = true,
                           String executor = "java",
                           const int xms = 1,
                           const int xmx = 4,
-                          String server_path = "",
-                          String server_file = "server.jar",
+                          String work_dir = "",
+                          String jar_file = "server.jar",
                           Vector<StringView> server_options = {})
         : type_is_java(type_is_java),
           xms(xms),
           xmx(xmx),
           executor(move(executor)),
-          server_path(move(server_path)),
-          server_file(move(server_file)),
-          server_options(move(server_options))
+          server_path(move(work_dir)),
+          server_file(move(jar_file)),
+          server_options(move(server_options)),
+          done(false)
     {
     }
 
     ~SingleServer()
     {
         exit(); // 确保对象销毁时自动清理
+        if (process)
+        {
+            process->wait();
+        }
     }
 
     /**
@@ -89,28 +99,35 @@ public:
             server_file_path += ".jar";
 
         Vector<String> args;
-        args.emplace_back("-Xms" + to_string(xms) + "G");
-        args.emplace_back("-Xmx" + to_string(xmx) + "G");
-        args.insert(args.end(), server_options.begin(), server_options.end());
         if (type_is_java)
+        {
+            args.emplace_back("-Xms" + to_string(xms) + "G");
+            args.emplace_back("-Xmx" + to_string(xmx) + "G");
             args.emplace_back("-jar");
+        }
         args.emplace_back(server_file_path.string());
+        args.insert(args.end(), server_options.begin(), server_options.end());
 
         try
         {
             process = make_unique<bp::process>(
                 bp::process(CTX,
-                            fs::path(server_file_path),
+                            executor,
                             args,
+                            bp::process_start_dir(server_path),
                             bp::process_stdio{input, output, output}));
+            start_async_read(output, false);
+            start_async_read(error, true);
+            io_thread = std::thread([this]
+            {
+                CTX.run();
+            });
         }
         catch (const exception& e)
         {
             spdlog::error("Failed to start instance: {}", e.what());
             return 1;
         }
-
-        CTX.run();
         return 0;
     }
 
@@ -119,12 +136,7 @@ public:
      */
     void exit()
     {
-        if (process)
-        {
-            process->terminate();
-            process->wait();
-            cleanup();
-        }
+        cleanup();
     }
 
     /**
@@ -133,11 +145,7 @@ public:
     void stop()
     {
         command("stop");
-        if (process)
-        {
-            process->wait();
-            cleanup();
-        }
+        cleanup();
     }
 
     /**
@@ -148,18 +156,31 @@ public:
     {
         if (input.is_open())
         {
+            if (!done)
+            {
+                command_line.emplace_back(cmd);
+                spdlog::warn("Server not launched, command lined, current line: \n{}", expand(command_line));
+                return;
+            }
             // 使用异步写入标准输入
             String data = cmd + "\n";
             asio::async_write(input, asio::buffer(data),
                               [](const boost::system::error_code& ec, size_t)
                               {
                                   if (ec)
-                                  {
-                                      cerr << "Error sending command: " << ec.message() << endl;
-                                  }
+                                      spdlog::error("Error sending command: ", ec.message());
                               }
             );
         }
+    }
+
+    /**
+     * @brief 注册日志解析器
+     * @param parser 解析器的UniquePtr
+     */
+    void register_parser(UniquePtr<LogParserInterface> parser)
+    {
+        log_parsers.emplace_back(move(parser));
     }
 
 private:
@@ -179,10 +200,21 @@ private:
                 if (ec)
                     return;
                 const String output(buffer->data(), bytes_transferred);
-                if (is_stderr)
-                    cerr << output;
-                else
-                    cout << output;
+                if (!done && output.contains("Done"))
+                {
+                    done = true;
+                    for (auto cmd : command_line)
+                        command(cmd);
+                }
+                for (auto& parser : log_parsers)
+                {
+                    if (!is_stderr)
+                        for (auto str : split(output, '\n'))
+                            parser.get()->parse(str);
+                    else
+                        for (auto str : split(output, '\n'))
+                            parser.get()->parse_err(str);
+                }
                 this->start_async_read(pipe, is_stderr);
             }
         );
@@ -193,9 +225,22 @@ private:
      */
     void cleanup()
     {
-        process.reset();
-        input.close();
-        output.close();
-        error.close();
+        if (process)
+        {
+            process->terminate();
+            process.reset();
+        }
+
+        // 安全关闭管道
+        if (input.is_open()) input.close();
+        if (output.is_open()) output.close();
+        if (error.is_open()) error.close();
+
+        // 停止并等待IO线程
+        CTX.stop();
+        if (io_thread.joinable())
+        {
+            io_thread.join();
+        }
     }
 };

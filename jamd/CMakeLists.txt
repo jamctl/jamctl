@@ -73,38 +73,46 @@ add_executable(jamd main.cpp
         modules/grpc/LaunchService.h
         modules/grpc/GrpcServer.cpp
         modules/grpc/GrpcServer.h
+        modules/parser/paper/help.h
+        modules/parser/interfaces/ILogParser.h
+        modules/parser/StdoutParser.h
+        modules/PasswordHasher.h
+
         utils/Singleton.h
+
         controllers/Instances.h
         controllers/User.h
         controllers/Instances.cpp
         controllers/User.cpp
+
         models/Instances.cc
         models/Instances.h
         models/Users.cc
         models/Users.h
+
         plugins/autoAddHeaders/AutoAddHeaders.cpp
         plugins/autoAddHeaders/AutoAddHeaders.h
         plugins/log/RequestLogger.h
         plugins/log/RequestLogger.cpp
         plugins/checkFeatureEnabled/CheckFeatureEnabled.cpp
         plugins/checkFeatureEnabled/CheckFeatureEnabled.h
-        ext/file.h
+
         ext/marcos/ktstyle.h
         ext/marcos/orm.h
         ext/marcos/drogon.h
+
         ext/extFuns.h
         ext/alias.h
         ext/jsonSerialization.h
         ext/yamlSerialization.h
         ext/styledORM.h
         structs/api/LaunchResult.h
+        structs/api/RegisterInfo.h
         structs/api.h
         structs/config/ServerConfig.h
         structs/config/JamdConfig.h
         structs/config.h
         ${GENERATED_SOURCES}
-        modules/PasswordHasher.h
-        structs/api/RegisterInfo.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)

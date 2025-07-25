@@ -33,7 +33,7 @@ namespace jamd::managers
          * @brief
          * @param configObj 由配置文件添加服务器
          */
-        void add(const structs::config::ServerConfig& configObj);
+        void add(const ServerConfig& configObj);
 
         /**
          * @brief

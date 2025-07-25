@@ -4,7 +4,7 @@ features:
   enable_register: true
 security:
   argon2:
-    timecost: 2
     memcost: 65536
+    timecost: 2
     parallelism: 1
     length: 32

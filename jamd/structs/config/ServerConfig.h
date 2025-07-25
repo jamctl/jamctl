@@ -1,23 +1,88 @@
 #pragma once
 #include "../../ext/alias.h"
+#include "../../ext/yamlSerialization.h"
 
-namespace jamd::structs::config
+struct ServerConfig
 {
-    using InstanceParams = Vector<String>;
+    int id;
+    String name;
+    String executor;
+    String workdir;
+    String target;
+    Vector<String> params;
+    Optional<int> xms;
+    Optional<int> xmx;
+    Optional<String> preset;
 
-    struct MemoryLimit
+    friend YAML::Emitter& operator<<(YAML::Emitter& out, const ServerConfig& obj)
     {
-        int xms;
-        int xmx;
-    };
+        out << YAML::BeginMap;
+        out << YAML::Key << "id";
+        out << YAML::Value << obj.id;
+        out << YAML::Key << "name";
+        out << YAML::Value << obj.name;
+        out << YAML::Key << "executor";
+        out << YAML::Value << obj.executor;
+        out << YAML::Key << "params";
+        out << YAML::Value << obj.params;
+        if (obj.xms.has_value())
+        {
+            out << YAML::Key << "xms";
+            out << YAML::Value << obj.xms.value();
+        }
+        if (obj.xmx.has_value())
+        {
+            out << YAML::Key << "xmx";
+            out << YAML::Value << obj.xmx.value();
+        }
+        if (obj.preset.has_value())
+        {
+            out << YAML::Key << "preset";
+            out << YAML::Value << obj.preset.value();
+        }
+        out << YAML::EndMap;
+        return out;
+    }
 
-    struct ServerConfig
+    friend bool operator>>(const YAML::Node& node, ServerConfig& obj)
     {
-        String name;
-        String executor;
-        MemoryLimit memoryLimit;
-        InstanceParams params;
-    };
+        if (!node.IsMap() || node.size() < 4) return false;
+        if (const YAML::Node& field = node["id"])
+            obj.id = field.as<int>();
+        else return false;
+        if (const YAML::Node& field = node["name"])
+            obj.name = field.as<String>();
+        else return false;
+        if (const YAML::Node& field = node["executor"])
+            obj.executor = field.as<String>();
+        else return false;
+        if (const YAML::Node& field = node["params"])
+            obj.params = field.as<Vector<String>>();
+        else return false;
+        if (const YAML::Node& field = node["xms"])
+            obj.xms = field.as<int>();
+        else obj.xms = std::nullopt;
+        if (const YAML::Node& field = node["xmx"])
+            obj.xmx = field.as<int>();
+        else obj.xmx = std::nullopt;
+        if (const YAML::Node& field = node["preset"])
+            obj.preset = field.as<String>();
+        else obj.preset = std::nullopt;
+        return true;
+    }
+};
 
-    using ConfFilePair = Pair<String, ServerConfig>;
-}
+template <>
+struct YAML::convert<ServerConfig>
+{
+    static Node encode(const ServerConfig& rhs)
+    {
+        Emitter out;
+        out << rhs;
+        return Load(out.c_str());
+    }
+
+    static bool decode(const Node& node, ServerConfig& rhs) { return node >> rhs; }
+};
+
+using ConfFilePair = Pair<String, ServerConfig>;

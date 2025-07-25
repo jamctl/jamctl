@@ -54,6 +54,7 @@ using Mutex = std::mutex;
 using IOContext = boost::asio::io_context;
 using WritablePipe = boost::asio::writable_pipe;
 using ReadablePipe = boost::asio::readable_pipe;
+using Thread = std::thread;
 
 
 // drogon

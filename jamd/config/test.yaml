@@ -1,0 +1,11 @@
+id: 1
+name: test1
+executor: "/usr/bin/java"
+params: [""]
+workdir: "server/leaves/"
+target: "leaves-1.21.6.jar"
+
+# Java server specified config
+xms: 1
+xmx: 4
+preset: paper
