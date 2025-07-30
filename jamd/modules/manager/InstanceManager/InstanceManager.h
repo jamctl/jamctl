@@ -1,16 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <unordered_set>
+#include <unordered_map>
 #include "SingleServer.hpp"
 #include "../../../utils/Singleton.h"
 #include "../../../structs/config.h"
 #include "../../ext/alias.h"
 
 using Instance = SingleServer;
-using InstanceObjs = Vector<Instance>;
-using InstanceLogs = Vector<String>;
-using InstanceList = Vector<int>;
 
 namespace jamd::managers
 {
@@ -20,15 +17,10 @@ namespace jamd::managers
     class InstanceManager final : public Singleton<InstanceManager>
     {
         friend class Singleton;
+        Vector<ServerConfig> server_configs;
+        UnorderedMap<String, String> config_path;
 
     public:
-
-        /**
-         * @brief
-         * @param instance 现存实例引用
-         */
-        void add(const ::Instance& instance);
-
         /**
          * @brief
          * @param configObj 由配置文件添加服务器
@@ -39,25 +31,37 @@ namespace jamd::managers
          * @brief
          * @param name 要移除的服务器的名字
          */
-        void remove(const String& name);
+        bool remove(const String& name);
 
         /**
          * @brief
          * @param id 要移除的服务器的id
          */
-        void remove(int id);
+        bool remove(int id);
 
         /**
          * @brief
          * @param instances 要移除的服务器实例id的列表
          */
-        void remove(const InstanceList& instances);
+        void remove(const Vector<int>& instances);
+
+        /**
+         * @brief
+         * @param id 要停止的服务器的id
+         */
+        bool stop(int id);
+
+        /**
+         * @brief
+         * @param name 要停止的服务器的名字
+         */
+        bool stop(const String& name);
 
         /**
          * @brief
          * @param instance 要启动的服务器的引用
          */
-        int launch(const ::Instance& instance);
+        static int launch(::Instance& instance);
 
         /**
          * @brief
@@ -75,13 +79,13 @@ namespace jamd::managers
          * @brief
          * @param instances 要启动的服务器的列表
          */
-        int launch(const InstanceList& instances);
+        bool launch(const Vector<int>& instances);
 
         /**
          * @brief
          * @param instance 要重启的服务器的引用
          */
-        int relaunch(const ::Instance& instance);
+        static int relaunch(::Instance& instance);
 
         /**
          * @brief
@@ -99,20 +103,40 @@ namespace jamd::managers
          * @brief
          * @param instances 要启动的服务器的列表
          */
-        int relaunch(const InstanceList& instances);
+        bool relaunch(const Vector<int>& instances);
 
-        InstanceLogs log(int id);
+        /**
+         * @brief
+         * @param id 服务器的id
+         */
+        Vector<String> log(int id);
 
-        InstanceLogs log(const String& name);
+        /**
+         * @brief
+         * @param name 服务器的名称
+         */
+        Vector<String> log(const String& name);
 
-        Optional<RefWrapper<::Instance>> getInstance(int id);
+        Optional<::Instance> getInstance(int id);
 
-        Optional<RefWrapper<::Instance>> getInstance(const String& name);
+        Optional<::Instance> getInstance(const String& name);
 
     private:
-        InstanceManager();
-
-        InstanceObjs instances;
-        InstanceList instanceIds;
+        InstanceManager()
+        {
+            val configs = File("config").getFiles(".yaml");
+            spdlog::info("Loading config(s)");
+            for (auto config : configs)
+            {
+                val it = YAML::LoadFile(config).as<ServerConfig>();
+                server_configs.push_back(it);
+                config_path.insert({to_string(it.id), config.string()});
+                spdlog::debug("Config #{} named {} from file {}", it.id, it.name, config.string());
+            }
+            if (val sz = configs.size(); sz > 1)
+                spdlog::info("{} configs loaded", sz);
+            else
+                spdlog::info("Loaded one config");
+        }
     };
 }

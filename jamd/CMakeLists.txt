@@ -73,7 +73,6 @@ add_executable(jamd main.cpp
         modules/grpc/LaunchService.h
         modules/grpc/GrpcServer.cpp
         modules/grpc/GrpcServer.h
-        modules/parser/paper/help.h
         modules/parser/interfaces/ILogParser.h
         modules/parser/StdoutParser.h
         modules/PasswordHasher.h
@@ -113,6 +112,8 @@ add_executable(jamd main.cpp
         structs/config/JamdConfig.h
         structs/config.h
         ${GENERATED_SOURCES}
+        modules/preset/presets.h
+        modules/parser/vanilla.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)

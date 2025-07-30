@@ -1,84 +1,161 @@
 #include "InstanceManager.h"
 
+#include "../ConfigFileManager/ConfigFileManager.h"
+
 namespace jamd::managers
 {
-    InstanceManager::InstanceManager() = default;
-
-    void InstanceManager::add(const ::Instance& instance)
-    {
-    }
-
     void InstanceManager::add(const ServerConfig& configObj)
     {
+        const Path p = ConfigFileManager::Instance().daemonConfig.instances.save_path;
+        std::ofstream configFile(p/(configObj.name+".yaml"));
+        var e = YAML::Emitter();
+        e << configObj;
+        configFile << e.c_str();
+        configFile.close();
     }
 
-    void InstanceManager::remove(const String& name)
+    bool InstanceManager::remove(const String& name)
     {
+        if (val r = std::ranges::find_if(server_configs, [=](const ServerConfig& config)
+        {
+            return config.name == name;
+        }); r != server_configs.end())
+        {
+            remove(r->id);
+            return true;
+        }
+        return false;
     }
 
-    void InstanceManager::remove(int id)
+    bool InstanceManager::remove(const int id)
     {
+        if (val r = config_path.find(to_string(id)); r != config_path.end())
+        {
+            std::remove(r->second.c_str());
+            config_path.erase(r);
+            return true;
+        }
+        return false;
     }
 
-    void InstanceManager::remove(const InstanceList& instances)
+    void InstanceManager::remove(const Vector<int>& instances)
     {
+        for (val instance : instances)
+        {
+            remove(instance);
+        }
+    }
+
+    bool InstanceManager::stop(const int id)
+    {
+        var r = getInstance(id);
+        if (!r.has_value())
+            return false;
+        r.value().stop();
+        return true;
+    }
+
+    bool InstanceManager::stop(const String& name)
+    {
+        var r = getInstance(name);
+        if (!r.has_value())
+            return false;
+        r.value().stop();
+        return true;
     }
 
     int InstanceManager::launch(const String& name)
     {
-        return {};
+        if (var r = getInstance(name); r.has_value())
+            return r.value().start();
+        return -1;
     }
 
-    int InstanceManager::launch(int id)
+    int InstanceManager::launch(const int id)
     {
+        if (var r = getInstance(id); r.has_value())
+            return r.value().start();
+        return -1;
     }
 
-    int InstanceManager::launch(const ::Instance& instance)
+    int InstanceManager::launch(::Instance& instance)
     {
+        return instance.start();
     }
 
-    int InstanceManager::launch(const InstanceList& instances)
+    bool InstanceManager::launch(const Vector<int>& instances)
     {
-        return {};
+        for (val instance : instances)
+            if (launch(instance) == 0)
+                return false;
+        return true;
     }
 
-    int InstanceManager::relaunch(const ::Instance& instance)
+    int InstanceManager::relaunch(::Instance& instance)
     {
-        return {};
+        instance.stop();
+        return launch(instance);
     }
 
     int InstanceManager::relaunch(const String& name)
     {
-        return {};
+        if (var r = getInstance(name); r.has_value())
+        {
+            r.value().stop();
+            return r.value().start();
+        }
+        return -1;
     }
 
-    int InstanceManager::relaunch(int id)
+    int InstanceManager::relaunch(const int id)
     {
-        return {};
+        if (var r = getInstance(id); r.has_value())
+        {
+            r.value().stop();
+            return r.value().start();
+        }
+        return -1;
     }
 
-    int InstanceManager::relaunch(const InstanceList& instances)
+    bool InstanceManager::relaunch(const Vector<int>& instances)
     {
-        return {};
+        for (val instance : instances)
+            if (launch(instance) == 0)
+                return false;
+        return true;
     }
 
-    InstanceLogs InstanceManager::log(int id)
+    Vector<String> InstanceManager::log(const int id)
     {
-        return {};
+        if (var r = getInstance(id); r.has_value())
+            return r.value().log();
+        return {""};
     }
 
-    InstanceLogs InstanceManager::log(const String& name)
+    Vector<String> InstanceManager::log(const String& name)
     {
-        return {};
+        if (var r = getInstance(name); r.has_value())
+            return r.value().log();
+        return {""};
     }
 
-    std::optional<RefWrapper<Instance>> InstanceManager::getInstance(int id)
+    Optional<Instance> InstanceManager::getInstance(const int id)
     {
-        return {};
+        val r = std::ranges::find_if(server_configs, [=](const ServerConfig& config)
+        {
+            return config.id == id;
+        });
+        if (r == server_configs.end()) return std::nullopt;
+        return r->instance();
     }
 
-    std::optional<RefWrapper<Instance>> InstanceManager::getInstance(const String& name)
+    Optional<Instance> InstanceManager::getInstance(const String& name)
     {
-        return {};
+        val r = std::ranges::find_if(server_configs, [&](const ServerConfig& config)
+        {
+            return config.name == name;
+        });
+        if (r == server_configs.end()) return std::nullopt;
+        return r->instance();
     }
 }

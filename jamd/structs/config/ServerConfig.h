@@ -1,6 +1,8 @@
 #pragma once
+#include <yaml-cpp/yaml.h>
 #include "../../ext/alias.h"
-#include "../../ext/yamlSerialization.h"
+#include "../../modules/manager/InstanceManager/SingleServer.hpp"
+#include "../../modules/preset/presets.h"
 
 struct ServerConfig
 {
@@ -12,7 +14,23 @@ struct ServerConfig
     Vector<String> params;
     Optional<int> xms;
     Optional<int> xmx;
-    Optional<String> preset;
+    Optional<Preset> preset;
+
+    Optional<SingleServer> instance() const
+    {
+        auto p = Vector<StringView>{};
+        for (auto param : params)
+            p.emplace_back(StringView(param));
+        return std::make_optional<SingleServer>(
+            executor.contains("java"),
+            executor,
+            xms.value_or(1),
+            xmx.value_or(4),
+            workdir,
+            target,
+            std::move(p)
+        );
+    }
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const ServerConfig& obj)
     {
@@ -38,7 +56,7 @@ struct ServerConfig
         if (obj.preset.has_value())
         {
             out << YAML::Key << "preset";
-            out << YAML::Value << obj.preset.value();
+            out << YAML::Value << getPresetName(obj.preset.value());
         }
         out << YAML::EndMap;
         return out;
@@ -66,7 +84,7 @@ struct ServerConfig
             obj.xmx = field.as<int>();
         else obj.xmx = std::nullopt;
         if (const YAML::Node& field = node["preset"])
-            obj.preset = field.as<String>();
+            obj.preset = field.as<Preset>();
         else obj.preset = std::nullopt;
         return true;
     }

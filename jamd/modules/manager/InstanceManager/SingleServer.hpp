@@ -175,6 +175,21 @@ public:
     }
 
     /**
+     * @brief 获取服务器输出
+     */
+    Vector<String> log()
+    {
+        Vector<char> data;
+        boost::system::error_code ec;
+        asio::read(output, asio::dynamic_buffer(data), ec);
+        if (ec && ec != asio::error::eof) {
+            return {""};
+        }
+        const String str_data(data.begin(), data.end());
+        return split(str_data, '\n');
+    }
+
+    /**
      * @brief 注册日志解析器
      * @param parser 解析器的UniquePtr
      */

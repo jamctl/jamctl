@@ -184,11 +184,51 @@ struct YAML::convert<JamdSecurityConfig>
     static bool decode(const Node& node, JamdSecurityConfig& rhs) { return node >> rhs; }
 };
 
+struct JamdLoggingConfig
+{
+    String level = "debug";
+
+    friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdLoggingConfig& obj)
+    {
+        out << YAML::BeginMap;
+        out << YAML::Key << "level";
+        out << YAML::Value << obj.level;
+        out << YAML::EndMap;
+        return out;
+    }
+
+    friend bool operator>>(const YAML::Node& node, JamdLoggingConfig& obj)
+    {
+        // if (!node.IsMap() || node.size() < 1) return false;
+        if (const YAML::Node& field = node["level"])
+        {
+            obj.level = field.as<String>();
+        }
+        // else { return false; }
+        return true;
+    }
+};
+
+template <>
+struct YAML::convert<JamdLoggingConfig>
+{
+    static Node encode(const JamdLoggingConfig& rhs)
+    {
+        Emitter out;
+        out << rhs;
+        return Load(out.c_str());
+    }
+
+    // ReSharper disable once CppDFAConstantFunctionResult
+    static bool decode(const Node& node, JamdLoggingConfig& rhs) { return node >> rhs; }
+};
+
 struct JamdConfig
 {
     JamdInstancesConfig instances{};
     JamdFeaturesConfig features{};
     JamdSecurityConfig security{};
+    JamdLoggingConfig log{};
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdConfig& obj)
     {
@@ -199,6 +239,8 @@ struct JamdConfig
         out << YAML::Value << obj.features;
         out << YAML::Key << "security";
         out << YAML::Value << obj.security;
+        out << YAML::Key << "log";
+        out << YAML::Value << obj.log;
         out << YAML::EndMap;
         return out;
     }
@@ -221,6 +263,10 @@ struct JamdConfig
             obj.security = field.as<JamdSecurityConfig>();
         }
         // else { return false; }
+        if (const YAML::Node& field = node["log"])
+        {
+            obj.log = field.as<JamdLoggingConfig>();
+        }
         return true;
     }
 };

@@ -5,6 +5,8 @@
 #include <string>
 #include <system_error>
 #include <fstream>
+#include <dirent.h>
+#include <spdlog/spdlog.h>
 
 #include "alias.h"
 
@@ -18,7 +20,7 @@ namespace fs = std::filesystem;
  */
 class File
 {
-    fs::path path;
+    Path path;
 
 public:
     explicit File(const String& pathname) : path(pathname)
@@ -125,6 +127,87 @@ public:
         }
         return files;
     }
+
+    Vector<Path> getFiles(
+        const String& extension = "",
+        const bool ignore_case = true,
+        const int max_depth = 0
+    ) const
+    {
+        // 检查目录是否存在
+        if (!this->exists())
+            throw std::invalid_argument("Directory does not exist: " + this->path.string());
+        if (!this->isDirectory())
+            throw std::invalid_argument("Path is not a directory: " + this->path.string());
+
+        Vector<Path> result;
+        String ext_lower = extension;
+
+        // 忽略大小写,如果可能
+        if (ignore_case && !extension.empty())
+        {
+            std::ranges::transform(ext_lower, ext_lower.begin(),
+                                   [](const unsigned char c) { return std::tolower(c); });
+        }
+
+        // 处理无限深度情况
+        const bool unlimited_depth = max_depth == -1;
+
+        // 递归遍历函数
+        Function<void(const Path&, int)> traverse;
+        traverse = [&](const Path& current_path, const int current_depth)
+        {
+            // 检查深度限制
+            if (!unlimited_depth && current_depth > max_depth)
+                return;
+
+            try
+            {
+                for (const auto& entry : fs::directory_iterator(current_path))
+                {
+                    try
+                    {
+                        // 如果是目录则递归遍历
+                        if (entry.is_directory())
+                            traverse(entry.path(), current_depth + 1);
+                            // 如果是文件则检查后缀
+                        else if (entry.is_regular_file())
+                        {
+                            if (extension.empty())
+                                result.push_back(entry.path());
+                            else
+                            {
+                                String file_ext = entry.path().extension().string();
+
+                                // 处理大小写
+                                if (ignore_case)
+                                    std::ranges::transform(file_ext, file_ext.begin(),
+                                                           [](unsigned char c) { return std::tolower(c); });
+
+                                // 检查后缀匹配
+                                if (file_ext == ext_lower)
+                                    result.push_back(entry.path());
+                            }
+                        }
+                    }
+                    catch (const fs::filesystem_error& e)
+                    {
+                        // 跳过无权限访问的文件/目录
+                        spdlog::warn(e.what());
+                    }
+                }
+            }
+            catch (const fs::filesystem_error& e)
+            {
+                // 处理目录访问错误
+                spdlog::error(e.what());
+            }
+        };
+
+        traverse(this->path, 0);
+        return result;
+    }
+
 
     // 时间戳方法
     [[nodiscard]] uint64_t lastModified() const

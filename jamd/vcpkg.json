@@ -5,6 +5,7 @@
     "boost",
     "hiredis",
     "jsoncpp",
+    "yaml-cpp",
     "spdlog",
     "libpqxx",
     "openssl",

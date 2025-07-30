@@ -8,3 +8,5 @@ security:
     timecost: 2
     parallelism: 1
     length: 32
+log:
+  level: debug
