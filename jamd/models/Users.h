@@ -49,7 +49,7 @@ class Users
         static const std::string _password;
         static const std::string _email;
         static const std::string _extra_emails;
-        static const std::string _group;
+        static const std::string _user_group;
     };
 
     static const int primaryKeyNumber;
@@ -149,15 +149,15 @@ class Users
     void setExtraEmails(std::string &&pExtraEmails) noexcept;
     void setExtraEmailsToNull() noexcept;
 
-    /**  For column group  */
-    ///Get the value of the column group, returns the default value if the column is null
-    const std::string &getValueOfGroup() const noexcept;
+    /**  For column user_group  */
+    ///Get the value of the column user_group, returns the default value if the column is null
+    const std::string &getValueOfUserGroup() const noexcept;
     ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
-    const std::shared_ptr<std::string> &getGroup() const noexcept;
-    ///Set the value of the column group
-    void setGroup(const std::string &pGroup) noexcept;
-    void setGroup(std::string &&pGroup) noexcept;
-    void setGroupToNull() noexcept;
+    const std::shared_ptr<std::string> &getUserGroup() const noexcept;
+    ///Set the value of the column user_group
+    void setUserGroup(const std::string &pUserGroup) noexcept;
+    void setUserGroup(std::string &&pUserGroup) noexcept;
+    void setUserGroupToNull() noexcept;
 
 
     static size_t getColumnNumber() noexcept {  return 6;  }
@@ -186,7 +186,7 @@ class Users
     std::shared_ptr<std::string> password_;
     std::shared_ptr<std::string> email_;
     std::shared_ptr<std::string> extraEmails_;
-    std::shared_ptr<std::string> group_;
+    std::shared_ptr<std::string> userGroup_;
     struct MetaData
     {
         const std::string colName_;
@@ -243,7 +243,7 @@ class Users
         }
         if(dirtyFlag_[5])
         {
-            sql += "group,";
+            sql += "user_group,";
             ++parametersCount;
         }
         if(parametersCount > 0)

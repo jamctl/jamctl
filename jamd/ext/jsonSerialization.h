@@ -145,7 +145,7 @@ Json::Value toJson(const std::variant<Ts...>& va)
         BOOST_HANA_DEFINE_STRUCT(NAME, __VA_ARGS__);                          \
                                                                               \
         [[nodiscard]] Json::Value toJson() const {                                          \
-            Json::Value json;                                                 \
+            Json::Value json(Json::objectValue);                                                 \
             hana::for_each(hana::keys(*this), [&](auto key) {                 \
                 constexpr auto name = hana::to<char const*>(key);             \
                 json[name] = ::toJson(hana::at_key(*this, key));             \

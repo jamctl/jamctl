@@ -76,6 +76,6 @@ target_link_libraries(jamctl PRIVATE
         yaml-cpp::yaml-cpp
         JsonCpp::JsonCpp
         spdlog::spdlog_header_only
-        ${_GRPC_GRPCPP}
+        ${GENERATED_SOURCES}
         gRPC::grpc++_reflection
 )

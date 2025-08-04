@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message ReloadConfigRequest {
+  optional string name = 1;
+}
+
+message ReloadConfigResult {
+  bool success = 1;
+}
+
+service System {
+  rpc ReloadConfig(ReloadConfigRequest) returns (ReloadConfigResult);
+}

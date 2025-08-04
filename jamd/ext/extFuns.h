@@ -71,6 +71,17 @@ Json::Value JValue(const String& name, T value)
     return json;
 }
 
+template <typename T>
+Json::Value JArray(const Vector<T>& values)
+{
+    auto arr = Json::Value(Json::arrayValue);
+    for (const auto& value : values)
+    {
+        arr.append(value);
+    }
+    return arr;
+}
+
 template <typename Container>
 String expand(const Container& container, const String& delim = ", ", int pos = 0)
 {
@@ -84,19 +95,21 @@ String expand(const Container& container, const String& delim = ", ", int pos = 
 
     // 计算实际起始索引
     const auto size = container.size();
-    if (pos < 0) {
-        pos += size;  // 将负索引转换为正索引
-        if (pos < 0) pos = 0;  // 处理转换后仍为负的情况..?
+    if (pos < 0)
+    {
+        pos += size; // 将负索引转换为正索引
+        if (pos < 0) pos = 0; // 处理转换后仍为负的情况..?
     }
-    if (static_cast<size_t>(pos) >= size) return "";  // 索引超出范围
+    if (static_cast<size_t>(pos) >= size) return ""; // 索引超出范围
 
     // 定位起始迭代器
     auto it = container.begin();
-    std::advance(it, pos);  // 移动到指定位置
+    std::advance(it, pos); // 移动到指定位置
 
     // 构建结果字符串
     String result = *it;
-    while (++it != container.end()) {
+    while (++it != container.end())
+    {
         result += delim;
         result += *it;
     }

@@ -9,6 +9,7 @@
 
 int main(int argc, char* argv[], char* envp[])
 {
+    std::locale::global(std::locale("zh_CN.UTF-8"));
     jamd::managers::ConfigFileManager::Instance();
     try
     {

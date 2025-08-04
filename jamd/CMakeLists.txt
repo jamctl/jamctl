@@ -75,14 +75,17 @@ add_executable(jamd main.cpp
         modules/grpc/GrpcServer.h
         modules/parser/interfaces/ILogParser.h
         modules/parser/StdoutParser.h
+        modules/preset/presets.h
+        modules/parser/vanilla.h
         modules/PasswordHasher.h
-
         utils/Singleton.h
 
         controllers/Instances.h
         controllers/User.h
         controllers/Instances.cpp
         controllers/User.cpp
+        controllers/System.h
+        controllers/System.cpp
 
         models/Instances.cc
         models/Instances.h
@@ -105,6 +108,7 @@ add_executable(jamd main.cpp
         ext/jsonSerialization.h
         ext/yamlSerialization.h
         ext/styledORM.h
+
         structs/api/LaunchResult.h
         structs/api/RegisterInfo.h
         structs/api.h
@@ -112,8 +116,6 @@ add_executable(jamd main.cpp
         structs/config/JamdConfig.h
         structs/config.h
         ${GENERATED_SOURCES}
-        modules/preset/presets.h
-        modules/parser/vanilla.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)

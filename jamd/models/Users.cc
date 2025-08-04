@@ -18,7 +18,7 @@ const std::string Users::Cols::_nickname = "\"nickname\"";
 const std::string Users::Cols::_password = "\"password\"";
 const std::string Users::Cols::_email = "\"email\"";
 const std::string Users::Cols::_extra_emails = "\"extra_emails\"";
-const std::string Users::Cols::_group = "\"group\"";
+const std::string Users::Cols::_user_group = "\"user_group\"";
 const std::vector<std::string> Users::primaryKeyName = {"name","nickname"};
 const bool Users::hasPrimaryKey = true;
 const std::string Users::tableName = "\"users\"";
@@ -28,8 +28,8 @@ const std::vector<typename Users::MetaData> Users::metaData_={
 {"nickname","std::string","text",0,0,1,1},
 {"password","std::string","text",0,0,0,0},
 {"email","std::string","text",0,0,0,0},
-{"extra_emails","std::string","ARRAY",0,0,0,0},
-{"group","std::string","text",0,0,0,0}
+{"extra_emails","std::string","text",0,0,0,0},
+{"user_group","std::string","text",0,0,0,0}
 };
 const std::string &Users::getColumnName(size_t index) noexcept(false)
 {
@@ -60,9 +60,9 @@ Users::Users(const Row &r, const ssize_t indexOffset) noexcept
         {
             extraEmails_=std::make_shared<std::string>(r["extra_emails"].as<std::string>());
         }
-        if(!r["group"].isNull())
+        if(!r["user_group"].isNull())
         {
-            group_=std::make_shared<std::string>(r["group"].as<std::string>());
+            userGroup_=std::make_shared<std::string>(r["user_group"].as<std::string>());
         }
     }
     else
@@ -102,7 +102,7 @@ Users::Users(const Row &r, const ssize_t indexOffset) noexcept
         index = offset + 5;
         if(!r[index].isNull())
         {
-            group_=std::make_shared<std::string>(r[index].as<std::string>());
+            userGroup_=std::make_shared<std::string>(r[index].as<std::string>());
         }
     }
 
@@ -160,7 +160,7 @@ Users::Users(const Json::Value &pJson, const std::vector<std::string> &pMasquera
         dirtyFlag_[5] = true;
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
-            group_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            userGroup_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
 }
@@ -207,12 +207,12 @@ Users::Users(const Json::Value &pJson) noexcept(false)
             extraEmails_=std::make_shared<std::string>(pJson["extra_emails"].asString());
         }
     }
-    if(pJson.isMember("group"))
+    if(pJson.isMember("user_group"))
     {
         dirtyFlag_[5]=true;
-        if(!pJson["group"].isNull())
+        if(!pJson["user_group"].isNull())
         {
-            group_=std::make_shared<std::string>(pJson["group"].asString());
+            userGroup_=std::make_shared<std::string>(pJson["user_group"].asString());
         }
     }
 }
@@ -268,7 +268,7 @@ void Users::updateByMasqueradedJson(const Json::Value &pJson,
         dirtyFlag_[5] = true;
         if(!pJson[pMasqueradingVector[5]].isNull())
         {
-            group_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
+            userGroup_=std::make_shared<std::string>(pJson[pMasqueradingVector[5]].asString());
         }
     }
 }
@@ -313,12 +313,12 @@ void Users::updateByJson(const Json::Value &pJson) noexcept(false)
             extraEmails_=std::make_shared<std::string>(pJson["extra_emails"].asString());
         }
     }
-    if(pJson.isMember("group"))
+    if(pJson.isMember("user_group"))
     {
         dirtyFlag_[5] = true;
-        if(!pJson["group"].isNull())
+        if(!pJson["user_group"].isNull())
         {
-            group_=std::make_shared<std::string>(pJson["group"].asString());
+            userGroup_=std::make_shared<std::string>(pJson["user_group"].asString());
         }
     }
 }
@@ -448,30 +448,30 @@ void Users::setExtraEmailsToNull() noexcept
     dirtyFlag_[4] = true;
 }
 
-const std::string &Users::getValueOfGroup() const noexcept
+const std::string &Users::getValueOfUserGroup() const noexcept
 {
     static const std::string defaultValue = std::string();
-    if(group_)
-        return *group_;
+    if(userGroup_)
+        return *userGroup_;
     return defaultValue;
 }
-const std::shared_ptr<std::string> &Users::getGroup() const noexcept
+const std::shared_ptr<std::string> &Users::getUserGroup() const noexcept
 {
-    return group_;
+    return userGroup_;
 }
-void Users::setGroup(const std::string &pGroup) noexcept
+void Users::setUserGroup(const std::string &pUserGroup) noexcept
 {
-    group_ = std::make_shared<std::string>(pGroup);
+    userGroup_ = std::make_shared<std::string>(pUserGroup);
     dirtyFlag_[5] = true;
 }
-void Users::setGroup(std::string &&pGroup) noexcept
+void Users::setUserGroup(std::string &&pUserGroup) noexcept
 {
-    group_ = std::make_shared<std::string>(std::move(pGroup));
+    userGroup_ = std::make_shared<std::string>(std::move(pUserGroup));
     dirtyFlag_[5] = true;
 }
-void Users::setGroupToNull() noexcept
+void Users::setUserGroupToNull() noexcept
 {
-    group_.reset();
+    userGroup_.reset();
     dirtyFlag_[5] = true;
 }
 
@@ -491,7 +491,7 @@ const std::vector<std::string> &Users::insertColumns() noexcept
         "password",
         "email",
         "extra_emails",
-        "group"
+        "user_group"
     };
     return inCols;
 }
@@ -555,9 +555,9 @@ void Users::outputArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[5])
     {
-        if(getGroup())
+        if(getUserGroup())
         {
-            binder << getValueOfGroup();
+            binder << getValueOfUserGroup();
         }
         else
         {
@@ -655,9 +655,9 @@ void Users::updateArgs(drogon::orm::internal::SqlBinder &binder) const
     }
     if(dirtyFlag_[5])
     {
-        if(getGroup())
+        if(getUserGroup())
         {
-            binder << getValueOfGroup();
+            binder << getValueOfUserGroup();
         }
         else
         {
@@ -708,13 +708,13 @@ Json::Value Users::toJson() const
     {
         ret["extra_emails"]=Json::Value();
     }
-    if(getGroup())
+    if(getUserGroup())
     {
-        ret["group"]=getValueOfGroup();
+        ret["user_group"]=getValueOfUserGroup();
     }
     else
     {
-        ret["group"]=Json::Value();
+        ret["user_group"]=Json::Value();
     }
     return ret;
 }
@@ -782,9 +782,9 @@ Json::Value Users::toMasqueradedJson(
         }
         if(!pMasqueradingVector[5].empty())
         {
-            if(getGroup())
+            if(getUserGroup())
             {
-                ret[pMasqueradingVector[5]]=getValueOfGroup();
+                ret[pMasqueradingVector[5]]=getValueOfUserGroup();
             }
             else
             {
@@ -834,13 +834,13 @@ Json::Value Users::toMasqueradedJson(
     {
         ret["extra_emails"]=Json::Value();
     }
-    if(getGroup())
+    if(getUserGroup())
     {
-        ret["group"]=getValueOfGroup();
+        ret["user_group"]=getValueOfUserGroup();
     }
     else
     {
-        ret["group"]=Json::Value();
+        ret["user_group"]=Json::Value();
     }
     return ret;
 }
@@ -882,9 +882,9 @@ bool Users::validateJsonForCreation(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(4, "extra_emails", pJson["extra_emails"], err, true))
             return false;
     }
-    if(pJson.isMember("group"))
+    if(pJson.isMember("user_group"))
     {
-        if(!validJsonOfField(5, "group", pJson["group"], err, true))
+        if(!validJsonOfField(5, "user_group", pJson["user_group"], err, true))
             return false;
     }
     return true;
@@ -1002,9 +1002,9 @@ bool Users::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(4, "extra_emails", pJson["extra_emails"], err, false))
             return false;
     }
-    if(pJson.isMember("group"))
+    if(pJson.isMember("user_group"))
     {
-        if(!validJsonOfField(5, "group", pJson["group"], err, false))
+        if(!validJsonOfField(5, "user_group", pJson["user_group"], err, false))
             return false;
     }
     return true;
