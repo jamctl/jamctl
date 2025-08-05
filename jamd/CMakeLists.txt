@@ -15,7 +15,8 @@ set(_REFLECTION gRPC::grpc++_reflection)
 if(CMAKE_CROSSCOMPILING)
     find_program(_PROTOBUF_PROTOC protoc)
 else()
-    set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+    get_target_property(PROTOC_LOCATION protobuf::protoc LOCATION)
+    set(_PROTOBUF_PROTOC "${PROTOC_LOCATION}")
 endif()
 find_package(gRPC CONFIG REQUIRED)
 message(STATUS "gRPC ${gRPC_VERSION}")
@@ -23,7 +24,8 @@ set(_GRPC_GRPCPP gRPC::grpc++)
 if(CMAKE_CROSSCOMPILING)
     find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
 else()
-    set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+    get_target_property(GRPC_PLUGIN_LOCATION gRPC::grpc_cpp_plugin LOCATION)
+    set(_GRPC_CPP_PLUGIN_EXECUTABLE "${GRPC_PLUGIN_LOCATION}")
 endif()
 message(STATUS "gRPC C++ Plugin at: ${_GRPC_CPP_PLUGIN_EXECUTABLE}")
 
@@ -37,15 +39,12 @@ foreach(proto ${PROTO_FILES})
     set(hdr "${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc/${proto_name}.pb.h")
     set(grpc_src "${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc/${proto_name}.grpc.pb.cc")
     set(grpc_hdr "${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc/${proto_name}.grpc.pb.h")
-    add_custom_command(
-            OUTPUT ${src} ${hdr} ${grpc_src} ${grpc_hdr}
-            COMMAND ${_PROTOBUF_PROTOC}
-            ARGS --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc
+    execute_process(
+            COMMAND ${_PROTOBUF_PROTOC} --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc
             --grpc_out=${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc
             --plugin=protoc-gen-grpc=${_GRPC_CPP_PLUGIN_EXECUTABLE}
             -I ${CMAKE_CURRENT_SOURCE_DIR}/modules/grpc/proto
             ${proto}
-            DEPENDS ${proto}
     )
     list(APPEND GENERATED_SOURCES ${src} ${grpc_src})
     list(APPEND GENERATED_HEADERS ${hdr} ${grpc_hdr})
@@ -116,6 +115,8 @@ add_executable(jamd main.cpp
         structs/config/JamdConfig.h
         structs/config.h
         ${GENERATED_SOURCES}
+        modules/grpc/JamdManageService.cpp
+        modules/grpc/JamdManageService.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)

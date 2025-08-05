@@ -2,6 +2,7 @@ instances:
   save_path: config
 features:
   enable_register: true
+  enable_grpc_server_reflection: true
 security:
   argon2:
     memcost: 65536

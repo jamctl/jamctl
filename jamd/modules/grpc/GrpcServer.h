@@ -6,6 +6,7 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 
+#include "JamdManageService.h"
 #include "LaunchService.h"
 #include "../../ext/alias.h"
 #include "../../utils/Singleton.h"
@@ -18,10 +19,12 @@ public:
     {
         if (!server_)
         {
-            grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+            if (jamd::managers::ConfigFileManager::Instance().daemonConfig.features.enable_grpc_server_reflection)
+                grpc::reflection::InitProtoReflectionServerBuilderPlugin();
             grpc::ServerBuilder builder;
             builder.AddListeningPort(address, grpc::InsecureServerCredentials());
-            builder.RegisterService(&service_);
+            builder.RegisterService(&launch_service_);
+            builder.RegisterService(&manage_service_);
             server_ = builder.BuildAndStart();
             if (server_)
             {
@@ -56,5 +59,6 @@ public:
 private:
     std::unique_ptr<grpc::Server> server_; // gRPC 服务器实例
     std::thread server_thread_; // gRPC 服务器运行线程
-    LaunchService service_;
+    LaunchService launch_service_;
+    JamdManageService manage_service_;
 };

@@ -16,10 +16,12 @@ void Instances::StartInstance(const Request& req,
     var& manager = InstanceManager::Instance();
     val ptr = app().getDbClient("jamd");
     Mapper<drogon_model::jamd::Instances> mp(ptr);
-    if (val rn = mp.findBy(where{drogon_model::jamd::Instances::Cols::_name eq target}); rn.size()
+    val rn = mp.findBy(where{drogon_model::jamd::Instances::Cols::_name eq target});
+    if (rn.size()
         != 1)
     {
-        if (val ri = mp.findBy(where{drogon_model::jamd::Instances::Cols::_id eq std::stoi(target)}); ri.size()
+        val ri = mp.findBy(where{drogon_model::jamd::Instances::Cols::_id eq std::stoi(target)});
+        if (ri.size()
             != 1)
         {
             callback(LaunchResult{
@@ -27,10 +29,10 @@ void Instances::StartInstance(const Request& req,
             }.toResponse());
             return;
         }
-        // manager.launch(*rn.getId());
+        manager.launch(*ri[0].getId());
         callback(LaunchResult{.success = true, .code = 200, .message = "Succeeded."}.toResponse());
         return;
     }
-    // manager.launch(*rn.getId());
+    manager.launch(*rn[0].getId());
     callback(LaunchResult{.success = true, .code = 200, .message = "Succeeded."}.toResponse());
 }

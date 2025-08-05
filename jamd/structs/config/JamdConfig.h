@@ -47,12 +47,15 @@ struct YAML::convert<JamdInstancesConfig>
 struct JamdFeaturesConfig
 {
     bool enable_register = true;
+    bool enable_grpc_server_reflection = true;
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdFeaturesConfig& obj)
     {
         out << YAML::BeginMap;
         out << YAML::Key << "enable_register";
         out << YAML::Value << obj.enable_register;
+        out << YAML::Key << "enable_grpc_server_reflection";
+        out << YAML::Value << obj.enable_grpc_server_reflection;
         out << YAML::EndMap;
         return out;
     }
@@ -65,6 +68,10 @@ struct JamdFeaturesConfig
             obj.enable_register = field.as<bool>();
         }
         // else { return false; }
+        if (const YAML::Node& field = node["enable_grpc_server_reflection"])
+        {
+            obj.enable_grpc_server_reflection = field.as<bool>();
+        }
         return true;
     }
 };
