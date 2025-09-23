@@ -7,7 +7,7 @@ namespace jamd::managers
     void InstanceManager::add(const ServerConfig& configObj)
     {
         const Path p = ConfigFileManager::Instance().daemonConfig.instances.save_path;
-        std::ofstream configFile(p/(configObj.name+".yaml"));
+        std::ofstream configFile(p / (configObj.name + ".yaml"));
         var e = YAML::Emitter();
         e << configObj;
         configFile << e.c_str();
@@ -19,8 +19,7 @@ namespace jamd::managers
         if (val r = std::ranges::find_if(server_configs, [=](const ServerConfig& config)
         {
             return config.name == name;
-        }); r != server_configs.end())
-        {
+        }); r != server_configs.end()) {
             remove(r->id);
             return true;
         }
@@ -29,8 +28,7 @@ namespace jamd::managers
 
     bool InstanceManager::remove(const int id)
     {
-        if (val r = config_path.find(to_string(id)); r != config_path.end())
-        {
+        if (val r = config_path.find(to_string(id)); r != config_path.end()) {
             std::remove(r->second.c_str());
             config_path.erase(r);
             return true;
@@ -40,8 +38,7 @@ namespace jamd::managers
 
     void InstanceManager::remove(const Vector<int>& instances)
     {
-        for (val instance : instances)
-        {
+        for (val instance : instances) {
             remove(instance);
         }
     }
@@ -99,8 +96,7 @@ namespace jamd::managers
 
     int InstanceManager::relaunch(const String& name)
     {
-        if (var r = getInstance(name); r.has_value())
-        {
+        if (var r = getInstance(name); r.has_value()) {
             r.value().stop();
             return r.value().start();
         }
@@ -109,8 +105,7 @@ namespace jamd::managers
 
     int InstanceManager::relaunch(const int id)
     {
-        if (var r = getInstance(id); r.has_value())
-        {
+        if (var r = getInstance(id); r.has_value()) {
             r.value().stop();
             return r.value().start();
         }
@@ -129,14 +124,14 @@ namespace jamd::managers
     {
         if (var r = getInstance(id); r.has_value())
             return r.value().log();
-        return {""};
+        return { "" };
     }
 
     Vector<String> InstanceManager::log(const String& name)
     {
         if (var r = getInstance(name); r.has_value())
             return r.value().log();
-        return {""};
+        return { "" };
     }
 
     Optional<Instance> InstanceManager::getInstance(const int id)
@@ -145,7 +140,8 @@ namespace jamd::managers
         {
             return config.id == id;
         });
-        if (r == server_configs.end()) return std::nullopt;
+        if (r == server_configs.end())
+            return std::nullopt;
         return r->instance();
     }
 
@@ -155,7 +151,8 @@ namespace jamd::managers
         {
             return config.name == name;
         });
-        if (r == server_configs.end()) return std::nullopt;
+        if (r == server_configs.end())
+            return std::nullopt;
         return r->instance();
     }
 }

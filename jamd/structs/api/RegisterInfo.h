@@ -15,7 +15,7 @@
 namespace jamd::structs::api::user
 {
     APIStruct(RegisterInfo,
-        (String, name),
-        (String, password),
-        (String, email))
+              (String, name),
+              (String, password),
+              (String, email))
 }

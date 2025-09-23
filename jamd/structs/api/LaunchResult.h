@@ -19,7 +19,16 @@ namespace jamd::structs::api::instances
     */
 
     APIStruct(LaunchResult, // NOLINT(*-pro-type-member-init)
-        (bool, success),
-        (int, code),
-        (String, message))
+              (bool, success),
+        (
+    int
+   ,
+    code
+    )
+   ,
+    (String
+   ,
+    message
+    )
+    )
 }

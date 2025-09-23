@@ -7,13 +7,14 @@
 
 namespace jamd::plugins
 {
-    class AutoAddHeaders final : public drogon::HttpMiddleware<AutoAddHeaders>
-    {
-    public:
-        AutoAddHeaders() = default;
+    class AutoAddHeaders final : public drogon::HttpMiddleware<AutoAddHeaders> {
+        public:
+            AutoAddHeaders() = default;
 
-        void invoke(const Request& req,
-                    drogon::MiddlewareNextCallback&& nextCb,
-                    drogon::MiddlewareCallback&& mcb) override;
+            void invoke(
+                const Request& req,
+                drogon::MiddlewareNextCallback&& nextCb,
+                drogon::MiddlewareCallback&& mcb
+            ) override;
     };
 }

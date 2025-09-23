@@ -11,10 +11,8 @@ JsonValue load_progress()
     JsonValue progress;
     String errs;
 
-    if (file)
-    {
-        if (Json::CharReaderBuilder builder; !Json::parseFromStream(builder, file, &progress, &errs))
-        {
+    if (file) {
+        if (Json::CharReaderBuilder builder; !Json::parseFromStream(builder, file, &progress, &errs)) {
             spdlog::error("无法解析进度文件: {}" + errs);
         }
     }
@@ -24,8 +22,7 @@ JsonValue load_progress()
 // 保存进度文件
 void save_progress(const JsonValue& progress)
 {
-    if (ofstream file(progress_file, ofstream::binary); file)
-    {
+    if (ofstream file(progress_file, ofstream::binary); file) {
         Json::StreamWriterBuilder writer;
         file << Json::writeString(writer, progress);
     }
@@ -35,8 +32,7 @@ void save_progress(const JsonValue& progress)
 void calculate_sha256_hash(const Path& filename, HashBuffer& outputBuffer)
 {
     std::ifstream file(filename, ios::binary);
-    if (!file)
-    {
+    if (!file) {
         LockGuard lock(log_mutex);
         spdlog::error("无法打开文件: {}" + filename.string());
         outputBuffer.assign(SHA256_DIGEST_LENGTH, 0);
@@ -44,15 +40,13 @@ void calculate_sha256_hash(const Path& filename, HashBuffer& outputBuffer)
     }
 
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
-    if (!ctx)
-    {
+    if (!ctx) {
         LockGuard lock(log_mutex);
         spdlog::error("无法创建 EVP_MD_CTX.");
         return;
     }
 
-    if (EVP_DigestInit_ex(ctx, EVP_sha256(), nullptr) != 1)
-    {
+    if (EVP_DigestInit_ex(ctx, EVP_sha256(), nullptr) != 1) {
         LockGuard lock(log_mutex);
         spdlog::error("初始化 SHA-256 失败.");
         EVP_MD_CTX_free(ctx);
@@ -60,10 +54,8 @@ void calculate_sha256_hash(const Path& filename, HashBuffer& outputBuffer)
     }
 
     Vector<char> buffer(32768);
-    while (file.read(buffer.data(), buffer.size()) || file.gcount() > 0)
-    {
-        if (EVP_DigestUpdate(ctx, buffer.data(), file.gcount()) != 1)
-        {
+    while (file.read(buffer.data(), buffer.size()) || file.gcount() > 0) {
+        if (EVP_DigestUpdate(ctx, buffer.data(), file.gcount()) != 1) {
             LockGuard lock(log_mutex);
             spdlog::error("SHA-256 更新失败.");
             EVP_MD_CTX_free(ctx);
@@ -73,8 +65,7 @@ void calculate_sha256_hash(const Path& filename, HashBuffer& outputBuffer)
 
     outputBuffer.resize(SHA256_DIGEST_LENGTH);
     unsigned int length;
-    if (EVP_DigestFinal_ex(ctx, outputBuffer.data(), &length) != 1)
-    {
+    if (EVP_DigestFinal_ex(ctx, outputBuffer.data(), &length) != 1) {
         LockGuard lock(log_mutex);
         spdlog::error("完成 SHA-256 哈希失败.");
         outputBuffer.clear();
@@ -89,8 +80,7 @@ void b_copy_file(const Path& src, const Path& dst)
     std::ifstream srcStream(src, ios::binary);
     ofstream dstStream(dst, ios::binary | ios::trunc);
 
-    if (!srcStream || !dstStream)
-    {
+    if (!srcStream || !dstStream) {
         LockGuard lock(log_mutex);
         spdlog::error("打开文件错误: {} -> {}", src.string(), dst.string());
         return;
@@ -109,11 +99,10 @@ bool is_file_modified(const Path& srcPath, const JsonValue& progress)
     val last_write_time = fs::last_write_time(srcPath);
     val file_size = fs::file_size(srcPath);
 
-    if (progress.isMember(srcPath.string()))
-    {
+    if (progress.isMember(srcPath.string())) {
         val& file_info = progress[srcPath.string()];
         return file_info["size"].asUInt64() != file_size ||
-            file_info["last_write_time"].asUInt64() != last_write_time.time_since_epoch().count();
+               file_info["last_write_time"].asUInt64() != last_write_time.time_since_epoch().count();
     }
     return true; // 如果进度文件中没有记录该文件，则认为它已修改
 }
@@ -141,8 +130,7 @@ void process_file(const Path& srcPath, const Path& dstPath, JsonValue& progress)
     calculate_sha256_hash(srcPath, srcHash);
 
     // 如果目标文件不存在，或者文件已修改，则复制文件并更新进度
-    if (!fs::exists(dstPath) || is_file_modified(srcPath, progress))
-    {
+    if (!fs::exists(dstPath) || is_file_modified(srcPath, progress)) {
         b_copy_file(srcPath, dstPath);
         update_progress(srcPath, srcHash, progress);
     }
@@ -159,23 +147,19 @@ void incremental_backup(const Path& sourceDir, const Path& destDir)
 
     Vector<Future> futures;
 
-    while (!dirs.empty())
-    {
+    while (!dirs.empty()) {
         Path currentDir = dirs.top();
         dirs.pop();
 
         Path currentDestDir = destDir / currentDir.filename();
-        if (!fs::exists(currentDestDir))
-        {
+        if (!fs::exists(currentDestDir)) {
             fs::create_directory(currentDestDir);
         }
 
-        for (val& entry : fs::directory_iterator(currentDir))
-        {
+        for (val& entry : fs::directory_iterator(currentDir)) {
             if (fs::is_directory(entry.status()))
                 dirs.push(entry.path());
-            else if (fs::is_regular_file(entry.status()))
-            {
+            else if (fs::is_regular_file(entry.status())) {
                 val& srcPath = entry.path();
                 Path dstPath = currentDestDir / entry.path().filename();
 
@@ -186,8 +170,7 @@ void incremental_backup(const Path& sourceDir, const Path& destDir)
     }
 
     // 等待所有异步任务完成
-    for (auto& fut : futures)
-    {
+    for (auto& fut : futures) {
         fut.get();
     }
 

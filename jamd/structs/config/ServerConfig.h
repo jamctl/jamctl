@@ -4,8 +4,7 @@
 #include "../../modules/manager/InstanceManager/SingleServer.hpp"
 #include "../../modules/preset/presets.h"
 
-struct ServerConfig
-{
+struct ServerConfig {
     int id;
     String name;
     String executor;
@@ -18,7 +17,7 @@ struct ServerConfig
 
     Optional<SingleServer> instance() const
     {
-        auto p = Vector<StringView>{};
+        auto p = Vector<StringView> {};
         for (auto param : params)
             p.emplace_back(StringView(param));
         return std::make_optional<SingleServer>(
@@ -43,18 +42,15 @@ struct ServerConfig
         out << YAML::Value << obj.executor;
         out << YAML::Key << "params";
         out << YAML::Value << obj.params;
-        if (obj.xms.has_value())
-        {
+        if (obj.xms.has_value()) {
             out << YAML::Key << "xms";
             out << YAML::Value << obj.xms.value();
         }
-        if (obj.xmx.has_value())
-        {
+        if (obj.xmx.has_value()) {
             out << YAML::Key << "xmx";
             out << YAML::Value << obj.xmx.value();
         }
-        if (obj.preset.has_value())
-        {
+        if (obj.preset.has_value()) {
             out << YAML::Key << "preset";
             out << YAML::Value << getPresetName(obj.preset.value());
         }
@@ -64,35 +60,41 @@ struct ServerConfig
 
     friend bool operator>>(const YAML::Node& node, ServerConfig& obj)
     {
-        if (!node.IsMap() || node.size() < 4) return false;
+        if (!node.IsMap() || node.size() < 4)
+            return false;
         if (const YAML::Node& field = node["id"])
             obj.id = field.as<int>();
-        else return false;
+        else
+            return false;
         if (const YAML::Node& field = node["name"])
             obj.name = field.as<String>();
-        else return false;
+        else
+            return false;
         if (const YAML::Node& field = node["executor"])
             obj.executor = field.as<String>();
-        else return false;
+        else
+            return false;
         if (const YAML::Node& field = node["params"])
             obj.params = field.as<Vector<String>>();
-        else return false;
+        else
+            return false;
         if (const YAML::Node& field = node["xms"])
             obj.xms = field.as<int>();
-        else obj.xms = std::nullopt;
+        else
+            obj.xms = std::nullopt;
         if (const YAML::Node& field = node["xmx"])
             obj.xmx = field.as<int>();
-        else obj.xmx = std::nullopt;
+        else
+            obj.xmx = std::nullopt;
         if (const YAML::Node& field = node["preset"])
             obj.preset = field.as<Preset>();
-        else obj.preset = std::nullopt;
+        else
+            obj.preset = std::nullopt;
         return true;
     }
 };
 
-template <>
-struct YAML::convert<ServerConfig>
-{
+template <> struct YAML::convert<ServerConfig> {
     static Node encode(const ServerConfig& rhs)
     {
         Emitter out;

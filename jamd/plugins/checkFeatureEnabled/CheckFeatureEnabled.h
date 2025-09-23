@@ -7,13 +7,14 @@
 
 namespace jamd::plugins
 {
-    class CheckFeatureEnabled final : public drogon::HttpMiddleware<CheckFeatureEnabled>
-    {
-    public:
-        CheckFeatureEnabled() = default;
+    class CheckFeatureEnabled final : public drogon::HttpMiddleware<CheckFeatureEnabled> {
+        public:
+            CheckFeatureEnabled() = default;
 
-        void invoke(const Request& req,
-                    drogon::MiddlewareNextCallback&& nextCb,
-                    drogon::MiddlewareCallback&& mcb) override;
+            void invoke(
+                const Request& req,
+                drogon::MiddlewareNextCallback&& nextCb,
+                drogon::MiddlewareCallback&& mcb
+            ) override;
     };
 }

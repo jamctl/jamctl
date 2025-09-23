@@ -8,13 +8,14 @@
 
 namespace jamd::plugins
 {
-    class RequestLogger final : public drogon::HttpMiddleware<RequestLogger>
-    {
-    public:
-        RequestLogger() = default;
+    class RequestLogger final : public drogon::HttpMiddleware<RequestLogger> {
+        public:
+            RequestLogger() = default;
 
-        void invoke(const Request& req,
-                    drogon::MiddlewareNextCallback&& nextCb,
-                    drogon::MiddlewareCallback&& mcb) override;
+            void invoke(
+                const Request& req,
+                drogon::MiddlewareNextCallback&& nextCb,
+                drogon::MiddlewareCallback&& mcb
+            ) override;
     };
 }

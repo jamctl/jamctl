@@ -1,7 +1,7 @@
 id: 1
 name: test1
 executor: "/usr/bin/java"
-params: [""]
+params: [ "" ]
 workdir: "server/leaves/"
 target: "leaves-1.21.6.jar"
 

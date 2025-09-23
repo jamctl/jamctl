@@ -8,10 +8,11 @@
 #include "../../ext/marcos/orm.h"
 #include "../../models/Instances.h"
 
-class LaunchService final : public LaunchInstance::Service
-{
-public:
-    grpc::Status Launch(grpc::ServerContext* context,
-                        const StartInstanceRequest* request,
-                        LaunchResult* reply) override;
+class LaunchService final : public LaunchInstance::Service {
+    public:
+        grpc::Status Launch(
+            grpc::ServerContext* context,
+            const StartInstanceRequest* request,
+            LaunchResult* reply
+        ) override;
 };

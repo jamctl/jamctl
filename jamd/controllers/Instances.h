@@ -21,6 +21,19 @@ public:
         GET("/start?instance={1:id|name}", Instances::StartInstance)
     METHOD_LIST_END
 
-    static void StartInstance(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr&)>&& callback,
-                              const String& target);
+        static void StartInstance(
+            const HttpRequestPtr& req,
+            std::function<void(const HttpResponsePtr &)>&& callback,
+            const String& target
+        );
+        static void StopInstance(
+            const Request& req,
+            RouteCallback&& callback,
+            const String& target
+        );
+        static void RestartInstance(
+            const Request& req,
+            RouteCallback&& callback,
+            const String& target
+        );
 };

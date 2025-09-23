@@ -5,8 +5,7 @@
 #include "../../ext/yamlSerialization.h"
 #include "../../ext/alias.h"
 
-struct JamdInstancesConfig
-{
+struct JamdInstancesConfig {
     String save_path = "config";
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdInstancesConfig& obj)
@@ -21,8 +20,7 @@ struct JamdInstancesConfig
     friend bool operator>>(const YAML::Node& node, JamdInstancesConfig& obj)
     {
         // if (!node.IsMap() || node.size() < 1) return false;
-        if (const YAML::Node& field = node["save_path"])
-        {
+        if (const YAML::Node& field = node["save_path"]) {
             obj.save_path = field.as<String>();
         }
         // else { return false; }
@@ -30,9 +28,7 @@ struct JamdInstancesConfig
     }
 };
 
-template <>
-struct YAML::convert<JamdInstancesConfig>
-{
+template <> struct YAML::convert<JamdInstancesConfig> {
     static Node encode(const JamdInstancesConfig& rhs)
     {
         Emitter out;
@@ -44,8 +40,7 @@ struct YAML::convert<JamdInstancesConfig>
     static bool decode(const Node& node, JamdInstancesConfig& rhs) { return node >> rhs; }
 };
 
-struct JamdFeaturesConfig
-{
+struct JamdFeaturesConfig {
     bool enable_register = true;
     bool enable_grpc_server_reflection = true;
 
@@ -63,22 +58,18 @@ struct JamdFeaturesConfig
     friend bool operator>>(const YAML::Node& node, JamdFeaturesConfig& obj)
     {
         // if (!node.IsMap() || node.size() < 1) return false;
-        if (const YAML::Node& field = node["enable_register"])
-        {
+        if (const YAML::Node& field = node["enable_register"]) {
             obj.enable_register = field.as<bool>();
         }
         // else { return false; }
-        if (const YAML::Node& field = node["enable_grpc_server_reflection"])
-        {
+        if (const YAML::Node& field = node["enable_grpc_server_reflection"]) {
             obj.enable_grpc_server_reflection = field.as<bool>();
         }
         return true;
     }
 };
 
-template <>
-struct YAML::convert<JamdFeaturesConfig>
-{
+template <> struct YAML::convert<JamdFeaturesConfig> {
     static Node encode(const JamdFeaturesConfig& rhs)
     {
         Emitter out;
@@ -90,8 +81,7 @@ struct YAML::convert<JamdFeaturesConfig>
     static bool decode(const Node& node, JamdFeaturesConfig& rhs) { return node >> rhs; }
 };
 
-struct JamdSecurityArgon2Config
-{
+struct JamdSecurityArgon2Config {
     uint32_t timecost = 2;
     uint32_t memcost = 65536;
     uint32_t parallelism = 1;
@@ -114,34 +104,25 @@ struct JamdSecurityArgon2Config
 
     friend bool operator>>(const YAML::Node& node, JamdSecurityArgon2Config& obj)
     {
-        if (!node.IsMap() || node.size() < 4) return false;
-        if (const YAML::Node& field = node["timecost"])
-        {
+        if (!node.IsMap() || node.size() < 4)
+            return false;
+        if (const YAML::Node& field = node["timecost"]) {
             obj.timecost = field.as<uint32_t>();
-        }
-        else { return false; }
-        if (const YAML::Node& field = node["memcost"])
-        {
+        } else { return false; }
+        if (const YAML::Node& field = node["memcost"]) {
             obj.memcost = field.as<uint32_t>();
-        }
-        else { return false; }
-        if (const YAML::Node& field = node["parallelism"])
-        {
+        } else { return false; }
+        if (const YAML::Node& field = node["parallelism"]) {
             obj.parallelism = field.as<uint32_t>();
-        }
-        else { return false; }
-        if (const YAML::Node& field = node["length"])
-        {
+        } else { return false; }
+        if (const YAML::Node& field = node["length"]) {
             obj.length = field.as<size_t>();
-        }
-        else { return false; }
+        } else { return false; }
         return true;
     }
 };
 
-template <>
-struct YAML::convert<JamdSecurityArgon2Config>
-{
+template <> struct YAML::convert<JamdSecurityArgon2Config> {
     static Node encode(const JamdSecurityArgon2Config& rhs)
     {
         Emitter out;
@@ -152,9 +133,8 @@ struct YAML::convert<JamdSecurityArgon2Config>
     static bool decode(const Node& node, JamdSecurityArgon2Config& rhs) { return node >> rhs; }
 };
 
-struct JamdSecurityConfig
-{
-    JamdSecurityArgon2Config argon2{};
+struct JamdSecurityConfig {
+    JamdSecurityArgon2Config argon2 {};
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdSecurityConfig& obj)
     {
@@ -168,8 +148,7 @@ struct JamdSecurityConfig
     friend bool operator>>(const YAML::Node& node, JamdSecurityConfig& obj)
     {
         // if (!node.IsMap() || node.size() < 1) return false;
-        if (const YAML::Node& field = node["argon2"])
-        {
+        if (const YAML::Node& field = node["argon2"]) {
             obj.argon2 = field.as<JamdSecurityArgon2Config>();
         }
         // else { return false; }
@@ -177,9 +156,7 @@ struct JamdSecurityConfig
     }
 };
 
-template <>
-struct YAML::convert<JamdSecurityConfig>
-{
+template <> struct YAML::convert<JamdSecurityConfig> {
     static Node encode(const JamdSecurityConfig& rhs)
     {
         Emitter out;
@@ -191,8 +168,7 @@ struct YAML::convert<JamdSecurityConfig>
     static bool decode(const Node& node, JamdSecurityConfig& rhs) { return node >> rhs; }
 };
 
-struct JamdLoggingConfig
-{
+struct JamdLoggingConfig {
     String level = "debug";
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdLoggingConfig& obj)
@@ -207,8 +183,7 @@ struct JamdLoggingConfig
     friend bool operator>>(const YAML::Node& node, JamdLoggingConfig& obj)
     {
         // if (!node.IsMap() || node.size() < 1) return false;
-        if (const YAML::Node& field = node["level"])
-        {
+        if (const YAML::Node& field = node["level"]) {
             obj.level = field.as<String>();
         }
         // else { return false; }
@@ -216,9 +191,7 @@ struct JamdLoggingConfig
     }
 };
 
-template <>
-struct YAML::convert<JamdLoggingConfig>
-{
+template <> struct YAML::convert<JamdLoggingConfig> {
     static Node encode(const JamdLoggingConfig& rhs)
     {
         Emitter out;
@@ -230,12 +203,11 @@ struct YAML::convert<JamdLoggingConfig>
     static bool decode(const Node& node, JamdLoggingConfig& rhs) { return node >> rhs; }
 };
 
-struct JamdConfig
-{
-    JamdInstancesConfig instances{};
-    JamdFeaturesConfig features{};
-    JamdSecurityConfig security{};
-    JamdLoggingConfig log{};
+struct JamdConfig {
+    JamdInstancesConfig instances {};
+    JamdFeaturesConfig features {};
+    JamdSecurityConfig security {};
+    JamdLoggingConfig log {};
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const JamdConfig& obj)
     {
@@ -255,32 +227,26 @@ struct JamdConfig
     friend bool operator>>(const YAML::Node& node, JamdConfig& obj)
     {
         // if (!node.IsMap() || node.size() < 3) return false;
-        if (const YAML::Node& field = node["instances"])
-        {
+        if (const YAML::Node& field = node["instances"]) {
             obj.instances = field.as<JamdInstancesConfig>();
         }
         // else { return false; }
-        if (const YAML::Node& field = node["features"])
-        {
+        if (const YAML::Node& field = node["features"]) {
             obj.features = field.as<JamdFeaturesConfig>();
         }
         // else { return false; }
-        if (const YAML::Node& field = node["security"])
-        {
+        if (const YAML::Node& field = node["security"]) {
             obj.security = field.as<JamdSecurityConfig>();
         }
         // else { return false; }
-        if (const YAML::Node& field = node["log"])
-        {
+        if (const YAML::Node& field = node["log"]) {
             obj.log = field.as<JamdLoggingConfig>();
         }
         return true;
     }
 };
 
-template <>
-struct YAML::convert<JamdConfig>
-{
+template <> struct YAML::convert<JamdConfig> {
     static Node encode(const JamdConfig& rhs)
     {
         Emitter out;

@@ -2,8 +2,11 @@
 
 using namespace jamd::plugins;
 
-void AutoAddHeaders::invoke(const Request& req, drogon::MiddlewareNextCallback&& nextCb,
-                            drogon::MiddlewareCallback&& mcb)
+void AutoAddHeaders::invoke(
+    const Request& req,
+    drogon::MiddlewareNextCallback&& nextCb,
+    drogon::MiddlewareCallback&& mcb
+)
 {
     nextCb([mcb = std::move(mcb)](const Response& resp)
     {

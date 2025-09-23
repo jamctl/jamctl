@@ -61,88 +61,84 @@ find_package(OpenSSL REQUIRED)
 find_package(unofficial-argon2 CONFIG REQUIRED)
 
 add_executable(jamd main.cpp
-        modules/backup/backup.cpp
-        modules/backup/backup.h
-        modules/manager/InstanceManager/InstanceManager.cpp
-        modules/manager/InstanceManager/InstanceManager.h
-        modules/manager/InstanceManager/SingleServer.hpp
-        modules/manager/ConfigFileManager/ConfigFileManager.cpp
-        modules/manager/ConfigFileManager/ConfigFileManager.h
-        modules/grpc/LaunchService.cpp
-        modules/grpc/LaunchService.h
-        modules/grpc/GrpcServer.cpp
-        modules/grpc/GrpcServer.h
-        modules/parser/interfaces/ILogParser.h
-        modules/parser/StdoutParser.h
-        modules/preset/presets.h
-        modules/parser/vanilla.h
-        modules/PasswordHasher.h
-        utils/Singleton.h
+               modules/backup/backup.cpp
+               modules/backup/backup.h
+               modules/manager/InstanceManager/InstanceManager.cpp
+               modules/manager/InstanceManager/InstanceManager.h
+               modules/manager/InstanceManager/SingleServer.hpp
+               modules/manager/ConfigFileManager/ConfigFileManager.cpp
+               modules/manager/ConfigFileManager/ConfigFileManager.h
+               modules/grpc/LaunchService.cpp
+               modules/grpc/LaunchService.h
+               modules/grpc/GrpcServer.cpp
+               modules/grpc/GrpcServer.h
+               modules/parser/interfaces/ILogParser.h
+               modules/parser/StdoutParser.h
+               modules/preset/presets.h
+               modules/parser/vanilla.h
+               modules/PasswordHasher.h
+               utils/Singleton.h
 
-        controllers/Instances.h
-        controllers/User.h
-        controllers/Instances.cpp
-        controllers/User.cpp
-        controllers/System.h
-        controllers/System.cpp
+               controllers/Instances.h
+               controllers/User.h
+               controllers/Instances.cpp
+               controllers/User.cpp
+               controllers/System.h
+               controllers/System.cpp
 
-        models/Instances.cc
-        models/Instances.h
-        models/Users.cc
-        models/Users.h
+               models/Instances.cc
+               models/Instances.h
+               models/Users.cc
+               models/Users.h
 
-        plugins/autoAddHeaders/AutoAddHeaders.cpp
-        plugins/autoAddHeaders/AutoAddHeaders.h
-        plugins/log/RequestLogger.h
-        plugins/log/RequestLogger.cpp
-        plugins/checkFeatureEnabled/CheckFeatureEnabled.cpp
-        plugins/checkFeatureEnabled/CheckFeatureEnabled.h
+               plugins/autoAddHeaders/AutoAddHeaders.cpp
+               plugins/autoAddHeaders/AutoAddHeaders.h
+               plugins/log/RequestLogger.h
+               plugins/log/RequestLogger.cpp
+               plugins/checkFeatureEnabled/CheckFeatureEnabled.cpp
+               plugins/checkFeatureEnabled/CheckFeatureEnabled.h
 
-        ext/marcos/ktstyle.h
-        ext/marcos/orm.h
-        ext/marcos/drogon.h
+               ext/marcos/ktstyle.h
+               ext/marcos/orm.h
+               ext/marcos/drogon.h
 
-        ext/extFuns.h
-        ext/alias.h
-        ext/jsonSerialization.h
-        ext/yamlSerialization.h
-        ext/styledORM.h
-        ext/file.h
+               ext/extFuns.h
+               ext/alias.h
+               ext/jsonSerialization.h
+               ext/yamlSerialization.h
+               ext/tomlSerialization.h
+               ext/concepts.h
+               ext/file.h
+               ext/match.h
 
-        structs/api/LaunchResult.h
-        structs/api/RegisterInfo.h
-        structs/api.h
-        structs/config/ServerConfig.h
-        structs/config/JamdConfig.h
-        structs/config.h
-        ${GENERATED_SOURCES}
-        modules/grpc/JamdManageService.cpp
-        modules/grpc/JamdManageService.h
+               structs/api/LaunchResult.h
+               structs/api/RegisterInfo.h
+               structs/api.h
+               structs/config/ServerConfig.h
+               structs/config/JamdConfig.h
+               structs/config.h
+               ${GENERATED_SOURCES}
+               modules/grpc/JamdManageService.cpp
+               modules/grpc/JamdManageService.h
 )
 
 target_include_directories(jamd PRIVATE modules/grpc)
 
-if (MSVC)
-    target_compile_options(jamd PRIVATE /experimental:module /D_WIN32_WINNT=0x0A00)
-else ()
-    target_compile_options(jamd PRIVATE -fmodules-ts)
-endif ()
-
 target_link_libraries(jamd PRIVATE
-        Boost::filesystem
-        Boost::process
-        Boost::locale
-        PostgreSQL::PostgreSQL
-        hiredis
-        yaml-cpp::yaml-cpp
-        JsonCpp::JsonCpp
-        Drogon::Drogon
-        spdlog::spdlog_header_only
-        OpenSSL::SSL
-        OpenSSL::Crypto
-        ${_GRPC_GRPCPP}
-        gRPC::grpc++_reflection
-        unofficial::argon2::libargon2
+                      Boost::filesystem
+                      Boost::process
+                      Boost::locale
+                      PostgreSQL::PostgreSQL
+                      hiredis
+                      yaml-cpp::yaml-cpp
+                      JsonCpp::JsonCpp
+                      Drogon::Drogon
+                      spdlog::spdlog_header_only
+                      OpenSSL::SSL
+                      OpenSSL::Crypto
+                      ${_GRPC_GRPCPP}
+                      gRPC::grpc++_reflection
+                      unofficial::argon2::libargon2
 )
 
 file(COPY drogon.yaml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -175,9 +171,9 @@ set(SRC_DIRS ${CMAKE_SOURCE_DIR})
 file(MAKE_DIRECTORY ${PO_DIR})
 
 file(GLOB_RECURSE SRC_FILES
-        "${SRC_DIRS}/*.cpp"
-        "${SRC_DIRS}/*.h"
-        "${SRC_DIRS}/*.cc"
+     "${SRC_DIRS}/*.cpp"
+     "${SRC_DIRS}/*.h"
+     "${SRC_DIRS}/*.cc"
 )
 file(GLOB_RECURSE REMOVE_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/*.*")
 list(REMOVE_ITEM SRC_FILES ${REMOVE_SOURCES})

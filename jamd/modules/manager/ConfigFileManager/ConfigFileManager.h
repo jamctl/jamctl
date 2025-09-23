@@ -7,24 +7,20 @@
 
 namespace jamd::managers
 {
-    class ConfigFileManager final : public Singleton<ConfigFileManager>
-    {
+    class ConfigFileManager final : public Singleton<ConfigFileManager> {
         friend class Singleton;
 
         ConfigFileManager()
         {
-            try
-            {
+            try {
                 daemonConfig = YAML::LoadFile("jamd.yaml").as<JamdConfig>();
-            }
-            catch (YAML::BadFile)
-            {
+            } catch (YAML::BadFile) {
                 daemonConfig = JamdConfig();
                 spdlog::info("Using default config");
             }
         }
 
-    public:
-        JamdConfig daemonConfig;
+        public:
+            JamdConfig daemonConfig;
     };
 }

@@ -11,10 +11,17 @@
     "openssl",
     "argon2",
     "grpc",
+    "tomlplusplus",
     {
       "name": "drogon",
       "default-features": false,
-      "features": [ "ctl","orm","postgres","redis","yaml" ]
+      "features": [
+        "ctl",
+        "orm",
+        "postgres",
+        "redis",
+        "yaml"
+      ]
     }
   ]
 }
