@@ -18,7 +18,7 @@ void User::UserRegister(const HttpRequestPtr& req, Function<void(const HttpRespo
         mp.findBy(where { drogon_model::jamd::Users::Cols::_email eq info["email"] }).empty()
     ) {
         callback(
-            jamd::structs::api::instances::LaunchResult {
+            jamd::structs::api::instances::GeneralAPIResult {
                 .success = false,
                 .code = 409,
                 .message = "User Existed."
@@ -29,7 +29,7 @@ void User::UserRegister(const HttpRequestPtr& req, Function<void(const HttpRespo
     var new_user = drogon_model::jamd::Users(info);
     mp.insert(new_user);
     callback(
-        jamd::structs::api::instances::LaunchResult {
+        jamd::structs::api::instances::GeneralAPIResult {
             .success = true,
             .code = 200,
             .message = "Succeeded."

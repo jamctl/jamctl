@@ -1,4 +1,4 @@
 #pragma once
 
-#include "api/LaunchResult.h"
+#include "api/GeneralAPIResult.h"
 #include "api/RegisterInfo.h"

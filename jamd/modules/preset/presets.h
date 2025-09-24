@@ -7,6 +7,8 @@ typedef std::uint64_t hash_t;
 constexpr hash_t prime = 0x100000001B3ull;
 constexpr hash_t basis = 0xCBF29CE484222325ull;
 
+using String = std::string;
+
 inline hash_t hash_(char const* str)
 {
     hash_t ret { basis };

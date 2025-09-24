@@ -12,7 +12,7 @@ void System::ReloadConfig(const HttpRequestPtr& req, Function<void(const HttpRes
         spdlog::info("Config file broken, using current config");
     }
     callback(
-        jamd::structs::api::instances::LaunchResult {
+        jamd::structs::api::instances::GeneralAPIResult {
             .success = true,
             .code = 200,
             .message = "Succeeded."

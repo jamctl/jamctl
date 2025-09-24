@@ -1,4 +1,5 @@
 #pragma once
+
 #include <deque>
 #include <list>
 #include <map>
@@ -39,7 +40,7 @@ template <typename K, typename V,
 template <typename K, typename V,
           typename H = std::hash<V>,
           typename P = std::equal_to<V>,
-          typename A = std::pair<const K, V>> using UnorderedMap = std::unordered_map<K, V, H, P, A>;
+          typename A = std::allocator<std::pair<const K, V>>> using UnorderedMap = std::unordered_map<K, V, H, P, A>;
 template <typename K, typename V> using Pair = std::pair<K, V>;
 template <typename T> using Optional = std::optional<T>;
 template <typename T> using RefWrapper = std::reference_wrapper<T>;

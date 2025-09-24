@@ -5,15 +5,15 @@
 #include "../../modules/preset/presets.h"
 
 struct ServerConfig {
-    int id;
+    int id {};
+    Optional<unsigned short> xms;
+    Optional<unsigned short> xmx;
+    Optional<Preset> preset;
     String name;
     String executor;
     String workdir;
     String target;
     Vector<String> params;
-    Optional<int> xms;
-    Optional<int> xmx;
-    Optional<Preset> preset;
 
     Optional<SingleServer> instance() const
     {
@@ -28,7 +28,7 @@ struct ServerConfig {
             workdir,
             target,
             std::move(p)
-        );
+            );
     }
 
     friend YAML::Emitter& operator<<(YAML::Emitter& out, const ServerConfig& obj)
@@ -79,11 +79,11 @@ struct ServerConfig {
         else
             return false;
         if (const YAML::Node& field = node["xms"])
-            obj.xms = field.as<int>();
+            obj.xms = field.as<unsigned short>();
         else
             obj.xms = std::nullopt;
         if (const YAML::Node& field = node["xmx"])
-            obj.xmx = field.as<int>();
+            obj.xmx = field.as<unsigned short>();
         else
             obj.xmx = std::nullopt;
         if (const YAML::Node& field = node["preset"])

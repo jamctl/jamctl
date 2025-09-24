@@ -1,6 +1,6 @@
 /**
- * @file LaunchResult.h
- * @brief LaunchResult结构体定义
+ * @file GeneralAPIResult.h
+ * @brief GeneralAPIResult结构体定义
  * @author Mojave Hao
  * @date 2025/5/29
  * @version 0.1.0
@@ -14,21 +14,12 @@
 namespace jamd::structs::api::instances
 {
     /**
-    * @struct LaunchResult
+    * @struct GeneralAPIResult
     * @brief 储存启动实例API的结果
     */
 
-    APIStruct(LaunchResult, // NOLINT(*-pro-type-member-init)
+    APIStruct(GeneralAPIResult, // NOLINT(*-pro-type-member-init)
               (bool, success),
-        (
-    int
-   ,
-    code
-    )
-   ,
-    (String
-   ,
-    message
-    )
-    )
+              (int, code),
+              (String, message))
 }

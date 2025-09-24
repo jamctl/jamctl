@@ -21,7 +21,7 @@ void Instances::StartInstance(
     if (rn.size() != 1) {
         val ri = mp.findBy(where { drogon_model::jamd::Instances::Cols::_id eq std::stoi(target) });
         if (ri.size() != 1) {
-            callback(LaunchResult {
+            callback(GeneralAPIResult {
                 .success = false,
                 .code = 404,
                 .message = "Error"
@@ -29,11 +29,11 @@ void Instances::StartInstance(
             return;
         }
         manager.launch(*ri[0].getId());
-        callback(LaunchResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
+        callback(GeneralAPIResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
         return;
     }
     manager.launch(*rn[0].getId());
-    callback(LaunchResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
+    callback(GeneralAPIResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
 }
 
 void Instances::StopInstance(
@@ -49,7 +49,7 @@ void Instances::StopInstance(
     if (rn.size() != 1) {
         val ri = mp.findBy(where { drogon_model::jamd::Instances::Cols::_id eq std::stoi(target) });
         if (ri.size() != 1) {
-            callback(LaunchResult {
+            callback(GeneralAPIResult {
                 .success = false,
                 .code = 404,
                 .message = "Error"
@@ -57,11 +57,11 @@ void Instances::StopInstance(
             return;
         }
         manager.stop(*ri[0].getId());
-        callback(LaunchResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
+        callback(GeneralAPIResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
         return;
     }
     manager.stop(*rn[0].getId());
-    callback(LaunchResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
+    callback(GeneralAPIResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
 }
 
 void Instances::RestartInstance(const Request& req, RouteCallback&& callback, const String& target)
@@ -73,7 +73,7 @@ void Instances::RestartInstance(const Request& req, RouteCallback&& callback, co
     if (rn.size() != 1) {
         val ri = mp.findBy(where { drogon_model::jamd::Instances::Cols::_id eq std::stoi(target) });
         if (ri.size() != 1) {
-            callback(LaunchResult {
+            callback(GeneralAPIResult {
                 .success = false,
                 .code = 404,
                 .message = "Error"
@@ -81,9 +81,9 @@ void Instances::RestartInstance(const Request& req, RouteCallback&& callback, co
             return;
         }
         manager.relaunch(*ri[0].getId());
-        callback(LaunchResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
+        callback(GeneralAPIResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
         return;
     }
     manager.relaunch(*rn[0].getId());
-    callback(LaunchResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
+    callback(GeneralAPIResult { .success = true, .code = 200, .message = "Succeeded." }.toResponse());
 }

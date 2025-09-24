@@ -111,7 +111,7 @@ add_executable(jamd main.cpp
                ext/file.h
                ext/match.h
 
-               structs/api/LaunchResult.h
+               structs/api/GeneralAPIResult.h
                structs/api/RegisterInfo.h
                structs/api.h
                structs/config/ServerConfig.h

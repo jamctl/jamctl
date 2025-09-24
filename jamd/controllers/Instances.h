@@ -12,7 +12,7 @@
 
 using namespace drogon;
 using InstanceManager = jamd::managers::InstanceManager;
-using jamd::structs::api::instances::LaunchResult;
+using jamd::structs::api::instances::GeneralAPIResult;
 
 class Instances final : public HttpController<Instances>
 {
