@@ -1,3 +1,6 @@
 [submodule "jamd/modules/tmsmt"]
 	path = jamd/modules/tmsmt
 	url = git@github.com:MSLXTeam/tmsmt.core.git
+[submodule "jamd/docs/doxygen-aswsome-css"]
+	path = jamd/docs/doxygen-aswsome-css
+	url = https://github.com/jothepro/doxygen-awesome-css.git

@@ -8,7 +8,8 @@ using namespace drogon;
 
 class User final : public HttpController<User> {
     public:
-        METHOD_LIST_BEGIN POST("/register", UserRegister)
+        METHOD_LIST_BEGIN
+            POST("/register", UserRegister)
         METHOD_LIST_END
 
         static void UserRegister(const HttpRequestPtr& req, Function<void(const HttpResponsePtr &)>&& callback);
